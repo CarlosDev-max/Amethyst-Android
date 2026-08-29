@@ -62,13 +62,12 @@ public class MainMenuFragment extends Fragment {
         mNewsButton.setOnClickListener(v -> Tools.openURL(requireActivity(), Tools.URL_HOME));
         mDiscordButton.setOnClickListener(v -> Tools.openURL(requireActivity(), getString(R.string.discord_invite)));
         mCustomControlButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
-        if (hasOnlineProfile()) {
-            mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation(false));
-            mInstallJarButton.setOnLongClickListener(v -> {
-                runInstallerWithConfirmation(true);
-                return true;
-            });
-        } else mInstallJarButton.setOnClickListener(v -> hasNoOnlineProfileDialog(requireActivity()));
+        // Removed account requirement for JAR execution - now works with offline accounts too
+        mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation(false));
+        mInstallJarButton.setOnLongClickListener(v -> {
+            runInstallerWithConfirmation(true);
+            return true;
+        });
         mEditProfileButton.setOnClickListener(v -> mVersionSpinner.openProfileEditor(requireActivity()));
 
         mPlayButton.setOnClickListener(v -> {
