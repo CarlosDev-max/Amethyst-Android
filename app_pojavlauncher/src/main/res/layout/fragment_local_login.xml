@@ -29,6 +29,21 @@
         app:layout_constraintBottom_toTopOf="@+id/login_edit_email"
         app:layout_constraintStart_toStartOf="@+id/login_edit_email" />
 
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="⚠️ OFFLINE MODE"
+        android:textColor="#FF9800"
+        android:textStyle="bold"
+        android:textSize="@dimen/_12ssp"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_25sdp"
+
+        app:layout_constraintTop_toTopOf="@+id/login_menu"
+        app:layout_constraintStart_toStartOf="@+id/login_menu"
+        app:layout_constraintEnd_toEndOf="@+id/login_menu" />
+
 
     <com.kdt.mcgui.MineEditText
         android:id="@+id/login_edit_email"

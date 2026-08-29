@@ -45,10 +45,18 @@ public class LocalLoginFragment extends Fragment {
                 return;
             }
 
-            ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{
-                    mUsernameEditText.getText().toString(), "" });
-
-            Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+            // Show offline mode warning before proceeding
+            Context context = v.getContext();
+            new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle(R.string.offline_mode_warning_title)
+                    .setMessage(R.string.offline_mode_warning_message)
+                    .setPositiveButton(R.string.offline_mode_confirm, (dialog, which) -> {
+                        ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{
+                                mUsernameEditText.getText().toString(), "" });
+                        Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+                    })
+                    .setNegativeButton(R.string.offline_mode_cancel, null)
+                    .show();
         });
     }
 
