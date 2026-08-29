@@ -467,6 +467,10 @@
     <string name="offline_mode_warning_message">You are about to use Offline Mode. Please note:\n\n• You cannot play on official Minecraft servers\n• Multiplayer features will be limited\n• Some mods may not work properly\n• This mode is for single-player testing only\n\nBy continuing, you acknowledge these limitations.</string>
     <string name="offline_mode_confirm">I understand, continue</string>
     <string name="offline_mode_cancel">Cancel</string>
+    <string name="mc26_high_requirements_title">⚠️ Minecraft 26.x High Requirements</string>
+    <string name="mc26_high_requirements_message">Minecraft 26.x requires significantly more resources:\n\n• Minimum 8GB RAM (12GB with integrated graphics)\n• Java 25 or higher\n• Vulkan 1.2 support (with OpenGL fallback)\n• Dedicated GPU recommended\n\nYour device may not meet these requirements. Expect performance issues or crashes.</string>
+    <string name="mc26_renderer_fallback">Renderer changed to OpenGL for better compatibility</string>
+    <string name="mc26_startup_check">Checking device compatibility for Minecraft 26.x...</string>
     <string name="delete_account_and_login">Delete account and log in</string>
     <string name="login_again">Please log in again</string>
     <string name="account_corrupted">Selected account is corrupted</string>

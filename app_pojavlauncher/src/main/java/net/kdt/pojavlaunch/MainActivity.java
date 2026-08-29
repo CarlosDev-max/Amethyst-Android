@@ -239,6 +239,15 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
                 // TODO: Remove this jank when it's not relevant anymore
                 // Shitty hack to make OSMZink smoothly transition into kopper
                 if (minecraftProfile.pojavRendererName.equals("vulkan_zink")) Tools.LOCAL_RENDERER = "opengles3_desktopgl_zink_kopper";
+                
+                // Auto-fallback to OpenGL for Minecraft 26.x for better compatibility
+                String version = minecraftProfile.lastVersionId;
+                if((version.startsWith("26.") || version.equals("26.1") || version.equals("26.2")) && 
+                   (minecraftProfile.pojavRendererName.contains("vulkan") || Tools.LOCAL_RENDERER.contains("vulkan"))) {
+                    Log.i("MC26Compat", "Auto-switching to OpenGL renderer for Minecraft 26.x compatibility");
+                    Tools.LOCAL_RENDERER = "opengles3_desktopgl_zink_kopper";
+                    runOnUiThread(() -> Toast.makeText(this, getString(R.string.mc26_renderer_fallback), Toast.LENGTH_LONG).show());
+                }
             }
 
             setTitle("Minecraft " + minecraftProfile.lastVersionId);
@@ -491,6 +500,19 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if (hasMods("sodium"))
             Logger.appendToLog("WARNING: Sodium is being used, Amethyst-Android does NOT support this mod, you are on your own");
         Logger.appendToLog("--------- Starting game with Launcher Debug!");
+        
+        // Enhanced diagnostics for Minecraft 26.x
+        if(versionId != null && (versionId.startsWith("26.") || versionId.equals("26.1") || versionId.equals("26.2"))) {
+            Logger.appendToLog("MC26Compat: Minecraft 26.x detected - enabling enhanced diagnostics");
+            Logger.appendToLog("MC26Compat: Free RAM: " + Tools.getFreeDeviceMemory(this) + "MB");
+            Logger.appendToLog("MC26Compat: Selected renderer: " + Tools.LOCAL_RENDERER);
+            Logger.appendToLog("MC26Compat: Java requirement: " + versionJavaRequirement);
+            int deviceRam = Tools.getTotalDeviceMemory(this);
+            if(deviceRam < 8192) {
+                Logger.appendToLog("MC26Compat: WARNING - Device has less than 8GB RAM, may experience issues");
+            }
+        }
+        
         Tools.printLauncherInfo(versionId, Tools.isValidString(minecraftProfile.javaArgs) ? minecraftProfile.javaArgs : LauncherPreferences.PREF_CUSTOM_JAVA_ARGS, Tools.getTotalDeviceMemory(this));
         if(Tools.LOCAL_RENDERER.equals("opengles_mobileglues")) {
             LauncherPreferences.writeMGRendererSettings();

@@ -425,6 +425,20 @@ public final class Tools {
                 // to start after the activity is shown again
             }
         }
+
+        // Check for Minecraft 26.x high requirements
+        if(versionId != null && (versionId.startsWith("26.") || versionId.equals("26.1") || versionId.equals("26.2"))) {
+            if(freeDeviceMemory < 8192) { // Less than 8GB
+                LifecycleAwareAlertDialog.DialogCreator mc26DialogCreator = (dialog, builder) ->
+                    builder.setTitle(R.string.mc26_high_requirements_title)
+                            .setMessage(R.string.mc26_high_requirements_message)
+                            .setPositiveButton(android.R.string.ok, (d, w)->{});
+                
+                if(LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, mc26DialogCreator)) {
+                    return;
+                }
+            }
+        }
         LauncherProfiles.load();
         File gamedir = Tools.getGameDirPath(minecraftProfile);
         startControllableMitigation(activity, gamedir);
