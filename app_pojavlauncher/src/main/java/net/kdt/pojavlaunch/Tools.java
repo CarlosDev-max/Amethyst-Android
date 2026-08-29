@@ -309,6 +309,7 @@ public final class Tools {
     /**
      * Tries to delete any sodium related mods of the currently selected profile via string matching
      * the files in the mods folder.
+     * Modified to allow CaffeineMC optimization mods (lithium, phosphor, ferritecore)
      */
     public static void deleteSodiumMods() {
         File modsDir = new File(getGameDir(), "mods");
@@ -316,6 +317,12 @@ public final class Tools {
         if(mods == null) ;
         for(File file : mods) {
             String name = file.getName().toLowerCase();
+            // Allow CaffeineMC optimization mods
+            if(name.contains("lithium") || name.contains("phosphor") || name.contains("ferritecore")) {
+                continue; // Skip deletion for CaffeineMC mods
+            }
+            
+            // Delete problematic rendering mods
             if(name.contains("sodium") ||
                     name.contains("beddium")    || // Also covers embeddium
                     name.contains("rubidium")   ||
@@ -380,6 +387,59 @@ public final class Tools {
     }
 
     private static String[] sodiumMods = {"sodium", "embeddium", "rubidium", "xenon"};
+    
+    // CaffeineMC optimization mods
+    private static String[] caffeineMCMods = {"lithium", "phosphor", "ferritecore", "sodium", "embeddium"};
+    
+    /**
+     * Check if CaffeineMC optimization mods are installed
+     * @return whether any CaffeineMC mods are found
+     */
+    public static boolean hasCaffeineMCMods() {
+        return hasMods(caffeineMCMods);
+    }
+    
+    /**
+     * Get installed CaffeineMC mods
+     * @return list of installed CaffeineMC mod files
+     */
+    public static List<File> getCaffeineMCMods() {
+        return getMods(caffeineMCMods);
+    }
+    
+    /**
+     * Configure optimal settings for CaffeineMC mods
+     * Automatically adjusts settings when CaffeineMC mods are detected
+     */
+    public static void configureCaffeineMCOptimizations() {
+        if(!hasCaffeineMCMods()) return;
+        
+        try {
+            // Optimize Minecraft options for better performance with CaffeineMC mods
+            MCOptionUtils.load();
+            
+            // Reduce render distance for mobile performance
+            String currentRenderDistance = MCOptionUtils.get("renderDistance");
+            int renderDistance = Integer.parseInt(currentRenderDistance);
+            if(renderDistance > 8) {
+                MCOptionUtils.set("renderDistance", "8");
+                Logger.appendToLog("CaffeineMC: Render distance reduced to 8 for better mobile performance");
+            }
+            
+            // Enable VSync for smoother gameplay
+            MCOptionUtils.set("vsync", "true");
+            
+            // Reduce graphics settings for mobile
+            MCOptionUtils.set("graphics", "fast");
+            MCOptionUtils.set("ao", "0"); // Disable ambient occlusion
+            MCOptionUtils.set("renderClouds", "false"); // Disable clouds
+            
+            MCOptionUtils.save();
+            Logger.appendToLog("CaffeineMC: Optimizations applied successfully");
+        } catch (Exception e) {
+            Log.e("CaffeineMC", "Failed to configure optimizations", e);
+        }
+    }
 
     private static boolean affectedByLTWRenderDistanceIssue() {
         if(!"opengles3_ltw".equals(Tools.LOCAL_RENDERER)) return false;
@@ -443,6 +503,9 @@ public final class Tools {
         File gamedir = Tools.getGameDirPath(minecraftProfile);
         startControllableMitigation(activity, gamedir);
         startOldLegacy4JMitigation(activity, gamedir);
+        
+        // Apply CaffeineMC optimizations if mods are detected
+        configureCaffeineMCOptimizations();
         if(affectedByLTWRenderDistanceIssue()) {
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = ((alertDialog, dialogBuilder) ->
                     dialogBuilder.setMessage(activity.getString(R.string.ltw_render_distance_warning_msg))
