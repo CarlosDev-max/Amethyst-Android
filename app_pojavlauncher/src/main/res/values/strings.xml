@@ -464,7 +464,7 @@
     <string name="no_minecraft_account_found">No Minecraft Account Found</string>
     <string name="feature_requires_java_account">This feature requires a Microsoft account that owns Minecraft Java Edition.</string>
     <string name="offline_mode_warning_title">⚠️ Offline Mode Warning</string>
-    <string name="offline_mode_warning_message">You are about to use Offline Mode. Please note:\n\n• You cannot play on official Minecraft servers\n• Multiplayer features will be limited\n• Some mods may not work properly\n• This mode is for single-player testing only\n\nBy continuing, you acknowledge these limitations.</string>
+    <string name="offline_mode_warning_message">You are about to use Offline Mode. Please note:\n\n• You cannot play on official premium servers (Hypixel, etc.)\n• Only offline-mode servers (online-mode=false) will work\n• Some mods may not work properly\n• Skin and cape features will be limited\n\nBy continuing, you acknowledge these limitations.</string>
     <string name="offline_mode_confirm">I understand, continue</string>
     <string name="offline_mode_cancel">Cancel</string>
     <string name="mc26_high_requirements_title">⚠️ Minecraft 26.x High Requirements</string>
