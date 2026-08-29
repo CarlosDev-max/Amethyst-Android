@@ -170,6 +170,18 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
                     startModInstallerWithUri(resourceUri);
                     runOnUiThread(barrierDialog::dismiss);
                 });
+            } else {
+                // Handle direct JAR file opening from file managers
+                Uri intentData = getIntent().getData();
+                if (intentData != null) {
+                    ProgressDialog barrierDialog = Tools.getWaitingDialog(this, R.string.multirt_progress_caching);
+                    PojavApplication.sExecutorService.execute(()->{
+                        startModInstallerWithUri(intentData);
+                        runOnUiThread(barrierDialog::dismiss);
+                    });
+                } else {
+                    finish();
+                }
             }
         } catch (Throwable th) {
             Tools.showError(this, th, true);
