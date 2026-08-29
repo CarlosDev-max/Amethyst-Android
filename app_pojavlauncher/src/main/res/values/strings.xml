@@ -473,6 +473,8 @@
     <string name="mc26_startup_check">Checking device compatibility for Minecraft 26.x...</string>
     <string name="caffeinemc_detected">CaffeineMC optimization mods detected</string>
     <string name="caffeinemc_optimizations_applied">Performance optimizations applied for CaffeineMC mods</string>
+    <string name="sodium_optimized_message">Sodium or rendering mods detected. These will work with mobile optimizations applied automatically. Continue with optimized settings?</string>
+    <string name="sodium_continue">Continue with optimizations</string>
     <string name="delete_account_and_login">Delete account and log in</string>
     <string name="login_again">Please log in again</string>
     <string name="account_corrupted">Selected account is corrupted</string>

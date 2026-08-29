@@ -307,45 +307,58 @@ public final class Tools {
     }
 
     /**
-     * Tries to delete any sodium related mods of the currently selected profile via string matching
-     * the files in the mods folder.
-     * Modified to allow CaffeineMC optimization mods (lithium, phosphor, ferritecore)
+     * Check for Sodium and rendering mods - now shows warning instead of deletion
+     * Users can now use Sodium and derivatives with proper mobile optimization
      */
-    public static void deleteSodiumMods() {
+    public static boolean hasRenderingMods() {
         File modsDir = new File(getGameDir(), "mods");
         File[] mods = modsDir.listFiles(file -> file.isFile() && file.getName().endsWith(".jar"));
-        if(mods == null) ;
+        if(mods == null) return false;
+        
         for(File file : mods) {
             String name = file.getName().toLowerCase();
-            // Allow CaffeineMC optimization mods
-            if(name.contains("lithium") || name.contains("phosphor") || name.contains("ferritecore")) {
-                continue; // Skip deletion for CaffeineMC mods
-            }
-            
-            // Delete problematic rendering mods
             if(name.contains("sodium") ||
                     name.contains("beddium")    || // Also covers embeddium
                     name.contains("rubidium")   ||
-                    name.contains("xenon")      || // Name conflicts with another mod
-                    name.contains("celeritas")  ||
-                    name.contains("relictium")  ||
-                    name.contains("vintagium")  ||
-                    name.contains("podium")     ||
+                    name.contains("xenon")      ||
                     name.contains("indium")     ||
-                    name.contains("lazurite")   ||
-                    name.contains("iris")       ||
-                    name.contains("monocle")    ||
-                    name.contains("voxy")       ||
-                    name.contains("nvidium")    ||
-                    name.contains("chloride")   ||
-                    name.contains("bedrodium")  ||
-                    name.contains("substrate")  || // Name conflicts with another mod
-                    name.contains("blendium")   ||
-                    name.contains("ryoamium")
-                // The name conflicts are for pretty dead mods so we ignore them.
-                // I doubt they're using some mod with less than 5k downloads with sodium.
-            ) if(!file.delete())
-                throw new RuntimeException("Failed to delete Sodium and related mods!");
+                    name.contains("iris")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Configure optimal settings for Sodium and rendering mods on mobile
+     */
+    public static void configureSodiumOptimizations() {
+        if(!hasRenderingMods()) return;
+        
+        try {
+            MCOptionUtils.load();
+            
+            // Optimize for mobile with Sodium
+            String currentRenderDistance = MCOptionUtils.get("renderDistance");
+            int renderDistance = Integer.parseInt(currentRenderDistance);
+            if(renderDistance > 6) {
+                MCOptionUtils.set("renderDistance", "6"); // Lower for mobile stability
+                Logger.appendToLog("Sodium: Render distance set to 6 for mobile compatibility");
+            }
+            
+            // Enable VSync for smoother performance
+            MCOptionUtils.set("vsync", "true");
+            
+            // Maximum performance settings
+            MCOptionUtils.set("graphics", "fast");
+            MCOptionUtils.set("ao", "0");
+            MCOptionUtils.set("renderClouds", "false");
+            MCOptionUtils.set("entityShadows", "false");
+            
+            MCOptionUtils.save();
+            Logger.appendToLog("Sodium: Mobile optimizations applied successfully");
+        } catch (Exception e) {
+            Log.e("Sodium", "Failed to configure optimizations", e);
         }
     }
 
@@ -506,6 +519,9 @@ public final class Tools {
         
         // Apply CaffeineMC optimizations if mods are detected
         configureCaffeineMCOptimizations();
+        
+        // Apply Sodium/rendering optimizations if mods are detected
+        configureSodiumOptimizations();
         if(affectedByLTWRenderDistanceIssue()) {
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = ((alertDialog, dialogBuilder) ->
                     dialogBuilder.setMessage(activity.getString(R.string.ltw_render_distance_warning_msg))

@@ -71,14 +71,15 @@ public class MainMenuFragment extends Fragment {
         mEditProfileButton.setOnClickListener(v -> mVersionSpinner.openProfileEditor(requireActivity()));
 
         mPlayButton.setOnClickListener(v -> {
-            if (Tools.hasMods("sodium") && !(LauncherPreferences.DEFAULT_PREF.getBoolean("sodium_override", false))) {
+            if (Tools.hasRenderingMods() && !(LauncherPreferences.DEFAULT_PREF.getBoolean("sodium_override", false))) {
                 AlertDialog sodiumWarningDialog = new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.sodium_warning_title)
-                        .setMessage(R.string.sodium_warning_message)
-                        .setNeutralButton(R.string.delete_sodium, (d,w)-> {
-                            Tools.deleteSodiumMods();
+                        .setMessage(R.string.sodium_optimized_message)
+                        .setPositiveButton(R.string.sodium_continue, (d,w)-> {
+                            Tools.configureSodiumOptimizations();
                             ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
                         })
+                        .setNegativeButton(R.string.global_cancel, null)
                         .create();
                 sodiumWarningDialog.show();
             } else ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
