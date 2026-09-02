@@ -31,6 +31,13 @@ import java.util.zip.ZipFile;
 
 public class ModrinthApi implements ModpackApi{
     private final ApiHandler mApiHandler;
+    // Remembers the last search's loader/version filters so getModDetails() can filter the
+    // per-project version list the same way - otherwise it returns every version for every
+    // loader and MC version ever published, letting the wrong (e.g. Fabric-only) build get
+    // installed even though the mod also happens to support the profile's actual loader.
+    private String mLastLoaderFilter;
+    private String mLastMcVersionFilter;
+
     public ModrinthApi(){
         mApiHandler = new ApiHandler("https://api.modrinth.com/v2");
     }
@@ -38,6 +45,8 @@ public class ModrinthApi implements ModpackApi{
     @Override
     public SearchResult searchMod(SearchFilters searchFilters, SearchResult previousPageResult) {
         ModrinthSearchResult modrinthSearchResult = (ModrinthSearchResult) previousPageResult;
+        mLastMcVersionFilter = searchFilters.mcVersion;
+        mLastLoaderFilter = searchFilters.isModpack ? null : searchFilters.modLoader;
 
         // Fixes an issue where the offset being equal or greater than total_hits is ignored
         if (modrinthSearchResult != null && modrinthSearchResult.previousOffset >= modrinthSearchResult.totalResultCount) {
@@ -93,7 +102,12 @@ public class ModrinthApi implements ModpackApi{
     @Override
     public ModDetail getModDetails(ModItem item) {
         fillInMissingModItemData(item);
-        JsonArray response = mApiHandler.get(String.format("project/%s/version", item.id), JsonArray.class);
+        HashMap<String, Object> params = new HashMap<>();
+        if (mLastLoaderFilter != null && !mLastLoaderFilter.isEmpty())
+            params.put("loaders", String.format("[\"%s\"]", mLastLoaderFilter));
+        if (mLastMcVersionFilter != null && !mLastMcVersionFilter.isEmpty())
+            params.put("game_versions", String.format("[\"%s\"]", mLastMcVersionFilter));
+        JsonArray response = mApiHandler.get(String.format("project/%s/version", item.id), params, JsonArray.class);
         if(response == null) return null;
         System.out.println(response);
         String[] names = new String[response.size()];
