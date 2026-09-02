@@ -109,7 +109,8 @@ public class NeoForgeInstallFragment extends ModVersionListFragment<List<String>
         Intent modInstallerStartIntent = new Intent(context, JavaGUILauncherActivity.class);
         modInstallerStartIntent
                 .putExtra("javaArgs", "-jar "+downloadedFile.getAbsolutePath()+" --install-client")
-                .putExtra("openLogOutput", true);
+                .putExtra("openLogOutput", true)
+                .putExtra(JavaGUILauncherActivity.EXTRA_TARGET_PROFILE_KEY, getTargetProfileKey());
         context.startActivity(modInstallerStartIntent);
     }
 }

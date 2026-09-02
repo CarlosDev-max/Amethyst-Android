@@ -501,12 +501,15 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
             Logger.appendToLog("WARNING: Sodium is being used, Amethyst-Android does NOT support this mod, you are on your own");
         Logger.appendToLog("--------- Starting game with Launcher Debug!");
         
+        int requiredJavaVersion = 8;
+        if(version.javaVersion != null) requiredJavaVersion = version.javaVersion.majorVersion;
+
         // Enhanced diagnostics for Minecraft 26.x
         if(versionId != null && (versionId.startsWith("26.") || versionId.equals("26.1") || versionId.equals("26.2"))) {
             Logger.appendToLog("MC26Compat: Minecraft 26.x detected - enabling enhanced diagnostics");
             Logger.appendToLog("MC26Compat: Free RAM: " + Tools.getFreeDeviceMemory(this) + "MB");
             Logger.appendToLog("MC26Compat: Selected renderer: " + Tools.LOCAL_RENDERER);
-            Logger.appendToLog("MC26Compat: Java requirement: " + versionJavaRequirement);
+            Logger.appendToLog("MC26Compat: Java requirement: " + requiredJavaVersion);
             int deviceRam = Tools.getTotalDeviceMemory(this);
             if(deviceRam < 8192) {
                 Logger.appendToLog("MC26Compat: WARNING - Device has less than 8GB RAM, may experience issues");
@@ -519,8 +522,6 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         }
         JREUtils.redirectAndPrintJRELog();
         LauncherProfiles.load();
-        int requiredJavaVersion = 8;
-        if(version.javaVersion != null) requiredJavaVersion = version.javaVersion.majorVersion;
         Tools.launchMinecraft(this, minecraftAccount, minecraftProfile, versionId, requiredJavaVersion);
         //Note that we actually stall in the above function, even if the game crashes. But let's be safe.
         Tools.runOnUiThread(()-> mServiceBinder.isActive = false);

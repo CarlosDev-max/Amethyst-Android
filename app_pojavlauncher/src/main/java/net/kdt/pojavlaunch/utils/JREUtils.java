@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.oracle.dalvik.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.IntConsumer;
 import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
@@ -304,6 +305,18 @@ public class JREUtils {
         }
     }
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
+        launchJavaVM(activity, runtime, gameDirectory, JVMArgs, userArgsString, null);
+    }
+
+    /**
+     * @param onBeforeExit optional callback invoked with the process exit code, right after the
+     *                      JVM finishes and before this method tears down the whole app process
+     *                      (via Tools.fullyExit()). Used to run any last-second bookkeeping that
+     *                      needs the JVM to have already fully finished running, e.g. detecting
+     *                      what a mod loader installer produced. Exceptions thrown here are
+     *                      logged and swallowed so they can never block the shutdown.
+     */
+    public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString, IntConsumer onBeforeExit) throws Throwable {
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
 
         JREUtils.relocateLibPath(runtime, runtimeHome);
@@ -370,6 +383,13 @@ public class JREUtils {
 
         final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
         Logger.appendToLog("Java Exit code: " + exitCode);
+        if (onBeforeExit != null) {
+            try {
+                onBeforeExit.accept(exitCode);
+            } catch (Throwable t) {
+                Log.e("launchJavaVM", "onBeforeExit callback failed", t);
+            }
+        }
         if (exitCode != 0) {
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder)->
                     builder.setMessage(activity.getString(R.string.mcn_exit_title, exitCode))

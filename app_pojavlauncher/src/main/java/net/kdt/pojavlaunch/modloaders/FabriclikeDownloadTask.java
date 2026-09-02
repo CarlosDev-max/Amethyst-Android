@@ -22,12 +22,20 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
     private final String mGameVersion;
     private final String mLoaderVersion;
     private final boolean mCreateProfile;
+    /** If set, update this existing profile's lastVersionId instead of creating a new one. */
+    private final String mTargetProfileKey;
+
     public FabriclikeDownloadTask(ModloaderDownloadListener modloaderDownloadListener, FabriclikeUtils utils, String mGameVersion, String mLoaderVersion, boolean mCreateProfile) {
+        this(modloaderDownloadListener, utils, mGameVersion, mLoaderVersion, mCreateProfile, null);
+    }
+
+    public FabriclikeDownloadTask(ModloaderDownloadListener modloaderDownloadListener, FabriclikeUtils utils, String mGameVersion, String mLoaderVersion, boolean mCreateProfile, String targetProfileKey) {
         this.mModloaderDownloadListener = modloaderDownloadListener;
         this.mUtils = utils;
         this.mGameVersion = mGameVersion;
         this.mLoaderVersion = mLoaderVersion;
         this.mCreateProfile = mCreateProfile;
+        this.mTargetProfileKey = targetProfileKey;
     }
 
     @Override
@@ -64,6 +72,13 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
             fabricProfile.icon = mUtils.getIconName();
             LauncherProfiles.insertMinecraftProfile(fabricProfile);
             LauncherProfiles.write();
+        } else if(mTargetProfileKey != null) {
+            LauncherProfiles.load();
+            MinecraftProfile targetProfile = LauncherProfiles.mainProfileJson.profiles.get(mTargetProfileKey);
+            if(targetProfile != null) {
+                targetProfile.lastVersionId = versionId;
+                LauncherProfiles.write();
+            }
         }
         return true;
     }

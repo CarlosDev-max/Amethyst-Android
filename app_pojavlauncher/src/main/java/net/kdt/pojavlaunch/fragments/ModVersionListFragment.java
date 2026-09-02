@@ -25,6 +25,10 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class ModVersionListFragment<T> extends Fragment implements Runnable, View.OnClickListener, ExpandableListView.OnChildClickListener, ModloaderDownloadListener {
+    /** Bundle key: when set, the installed loader should update this profile's lastVersionId
+     *  instead of creating a brand new profile. See ProfileEditorFragment. */
+    public static final String ARG_TARGET_PROFILE_KEY = "target_profile_key";
+
     private final String mExtraTag;
     private ExpandableListView mExpandableListView;
     private ProgressBar mProgressBar;
@@ -158,6 +162,17 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
 
     private ModloaderListenerProxy getTaskProxy() {
         return (ModloaderListenerProxy) ExtraCore.getValue(mExtraTag);
+    }
+
+    /**
+     * @return the profile key to update in-place after installation, or null if this
+     *         install flow should create a brand new profile as usual (default behavior,
+     *         e.g. when launched from ProfileTypeSelectFragment).
+     */
+    @Nullable
+    protected String getTargetProfileKey() {
+        Bundle args = getArguments();
+        return args == null ? null : args.getString(ARG_TARGET_PROFILE_KEY);
     }
 
     public abstract int getTitleText();

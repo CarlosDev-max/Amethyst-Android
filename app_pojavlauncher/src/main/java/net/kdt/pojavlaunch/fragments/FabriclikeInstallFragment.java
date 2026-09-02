@@ -36,6 +36,10 @@ import java.util.ArrayList;
 import java.util.concurrent.Future;
 
 public abstract class FabriclikeInstallFragment extends Fragment implements ModloaderDownloadListener, CompoundButton.OnCheckedChangeListener {
+    /** Bundle key: when set, the installed loader should update this profile's lastVersionId
+     *  instead of creating a brand new profile. See ProfileEditorFragment. */
+    public static final String ARG_TARGET_PROFILE_KEY = "target_profile_key";
+
     private final FabriclikeUtils mFabriclikeUtils;
     private final String mExtraTag;
     private Spinner mGameVersionSpinner;
@@ -101,12 +105,19 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             return;
         }
         ModloaderListenerProxy proxy = new ModloaderListenerProxy();
+        String targetProfileKey = getTargetProfileKey();
         FabriclikeDownloadTask fabricDownloadTask = new FabriclikeDownloadTask(proxy, mFabriclikeUtils,
-                mSelectedGameVersion, mSelectedLoaderVersion, true);
+                mSelectedGameVersion, mSelectedLoaderVersion, targetProfileKey == null, targetProfileKey);
         proxy.attachListener(this);
         setListenerProxy(proxy);
         mStartButton.setEnabled(false);
         new Thread(fabricDownloadTask).start();
+    }
+
+    @Nullable
+    protected String getTargetProfileKey() {
+        Bundle args = getArguments();
+        return args == null ? null : args.getString(ARG_TARGET_PROFILE_KEY);
     }
 
     private void onClickRetry(View v) {

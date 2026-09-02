@@ -382,6 +382,17 @@
     <string name="exception_failed_to_unpack_jre17">Failed to install JRE 17</string>
     <string name="newdl_starting">Reading game metadata…</string>
     <string name="newdl_downloading_jre_runtime">Downloading Java %s runtime (%.2f/%.2f MB)</string>
+    <string name="modinstall_downloading_jre">Downloading required Java runtime, please wait…</string>
+    <string name="pedit_modloader">Mod loader</string>
+    <string name="pedit_modloader_vanilla">Vanilla (no mod loader)</string>
+    <string name="pedit_modloader_install_button">Install / Change</string>
+    <string name="pedit_modloader_current">Current: %s</string>
+    <string name="pedit_modloader_changed">Mod loader updated for this profile.</string>
+    <string name="mod_library_context_placeholder">Mods for this profile</string>
+    <string name="mod_library_context_format">Mods for %1$s — %2$s</string>
+    <string name="mod_library_button">Mod library</string>
+    <string name="mod_library_install_success">Mod added to this profile\'s mods folder.</string>
+    <string name="mod_library_no_loader_warning">This profile has no mod loader installed yet — install one first to use most mods.</string>
     <string name="newdl_downloading_metadata">Downloading game metadata (%s)</string>
     <string name="newdl_downloading_game_files">Downloading game… (%d/%d, %.2f MB/s)</string>
     <string name="newdl_downloading_game_files_size">Downloading game… (%.2f/%.2f MB, %.2f MB/s)</string>

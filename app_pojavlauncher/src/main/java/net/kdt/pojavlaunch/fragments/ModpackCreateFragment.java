@@ -47,10 +47,9 @@ public class ModpackCreateFragment extends Fragment {
     }
 
     private void tryInstall(Class<? extends Fragment> fragmentClass, String tag){
-        if(!hasOnlineProfile()){
-            hasNoOnlineProfileDialog(requireActivity());
-        } else {
-            Tools.swapFragment(requireActivity(), fragmentClass, tag, null);
-        }
+        // Mod browsing and installation should remain available even when the user is
+        // using a local/offline profile. The registry/API layer itself handles any
+        // compatibility checks and should not be blocked by a general online-account gate.
+        Tools.swapFragment(requireActivity(), fragmentClass, tag, null);
     }
 }

@@ -23,6 +23,7 @@ import com.kdt.LoggerView;
 
 import net.kdt.pojavlaunch.customcontrols.keyboard.AwtCharSender;
 import net.kdt.pojavlaunch.customcontrols.keyboard.TouchCharInput;
+import net.kdt.pojavlaunch.modloaders.ModloaderProfileFixupUtils;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
@@ -45,6 +46,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouchListener {
+    /** Intent extra: profile key to update (lastVersionId) after a successful mod loader
+     *  install, instead of relying on the installer to create its own separate profile.
+     *  See ProfileEditorFragment / ModloaderProfileFixupUtils. */
+    public static final String EXTRA_TARGET_PROFILE_KEY = "target_profile_key";
+
+    private String mTargetProfileKey;
+    private java.util.Set<String> mVersionsSnapshotBeforeInstall;
 
     private AWTCanvasView mTextureView;
     private LoggerView mLoggerView;
@@ -161,8 +169,10 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
             }
             final String javaArgs = extras.getString("javaArgs");
             final Uri resourceUri = (Uri) extras.getParcelable("modUri");
+            mTargetProfileKey = extras.getString(EXTRA_TARGET_PROFILE_KEY);
             if(extras.getBoolean("openLogOutput", false)) openLogOutput(null);
             if (javaArgs != null) {
+                mVersionsSnapshotBeforeInstall = ModloaderProfileFixupUtils.snapshotVersions();
                 startModInstaller(null, javaArgs);
             }else if(resourceUri != null) {
                 ProgressDialog barrierDialog = Tools.getWaitingDialog(this, R.string.multirt_progress_caching);
@@ -219,12 +229,36 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
         }
         String nearestRuntime = MultiRTUtils.getNearestJreName(javaVersion);
         if(nearestRuntime == null) {
-            finalErrorDialog(getString(R.string.multirt_nocompatiblert, javaVersion));
-            return null;
+            // No compatible runtime installed yet (very common for mod installers, which
+            // usually need Java 8 even if the user never played an old vanilla version).
+            // Try to download an appropriate one automatically before giving up.
+            if (NewJREUtil.isJavaVersionAvailableForDownload(javaVersion)) {
+                nearestRuntime = tryAutoDownloadRuntime(javaVersion);
+            }
+            if (nearestRuntime == null) {
+                finalErrorDialog(getString(R.string.multirt_nocompatiblert, javaVersion));
+                return null;
+            }
         }
         Runtime selectedRuntime = MultiRTUtils.forceReread(nearestRuntime);
         int selectedJavaVersion = Math.max(javaVersion, selectedRuntime.javaVersion);
         return selectedRuntime;
+    }
+
+    /**
+     * Downloads a compatible Java runtime for {@code javaVersion}, showing a progress dialog.
+     * Blocks the calling thread until the download finishes or fails; must not be called from
+     * the UI thread.
+     *
+     * @return the name of the newly installed runtime, or null if the download failed.
+     */
+    private String tryAutoDownloadRuntime(int javaVersion) {
+        ProgressDialog progressDialog = Tools.getWaitingDialog(this, R.string.modinstall_downloading_jre);
+        try {
+            return NewJREUtil.ensureRuntimeForVersion(this, javaVersion);
+        } finally {
+            runOnUiThread(progressDialog::dismiss);
+        }
     }
 
     private File findModPath(List<String> argList) {
@@ -376,7 +410,12 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
 
             Logger.appendToLog("Info: Java arguments: " + Arrays.toString(javaArgList.toArray(new String[0])));
 
-            JREUtils.launchJavaVM(this, runtime,null,javaArgList, LauncherPreferences.PREF_CUSTOM_JAVA_ARGS);
+            JREUtils.launchJavaVM(this, runtime, null, javaArgList, LauncherPreferences.PREF_CUSTOM_JAVA_ARGS,
+                    exitCode -> {
+                        if (exitCode == 0 && mTargetProfileKey != null && mVersionsSnapshotBeforeInstall != null) {
+                            ModloaderProfileFixupUtils.applyNewlyCreatedVersion(mTargetProfileKey, mVersionsSnapshotBeforeInstall);
+                        }
+                    });
         } catch (Throwable th) {
             Tools.showError(this, th, true);
         }

@@ -26,14 +26,7 @@ public class SelectAuthFragment extends Fragment {
         Button mLocalButton = view.findViewById(R.id.button_local_authentication);
 
         mMicrosoftButton.setOnClickListener(v -> Tools.swapFragment(requireActivity(), MicrosoftLoginFragment.class, MicrosoftLoginFragment.TAG, null));
-        mLocalButton.setOnClickListener(v -> {
-            new androidx.appcompat.app.AlertDialog.Builder(requireActivity())
-                    .setTitle(R.string.offline_mode_warning_title)
-                    .setMessage(R.string.offline_mode_warning_message)
-                    .setPositiveButton(R.string.offline_mode_confirm, (dialog, which) -> 
-                        hasNoOnlineProfileDialog(requireActivity(), () -> Tools.swapFragment(requireActivity(), LocalLoginFragment.class, LocalLoginFragment.TAG, null)))
-                    .setNegativeButton(R.string.offline_mode_cancel, null)
-                    .show();
-        });
+        mLocalButton.setOnClickListener(v -> 
+            Tools.swapFragment(requireActivity(), LocalLoginFragment.class, LocalLoginFragment.TAG, null));
     }
 }

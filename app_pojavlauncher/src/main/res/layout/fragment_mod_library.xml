@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_app"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="@dimen/fragment_padding_medium"
+    >
+
+    <!-- Cosmetic layout to have a better scrolling separation -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mod_library_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="10dp"
+        android:background="@drawable/background_overlay"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:paddingVertical="@dimen/padding_medium"
+        android:layout_marginTop="@dimen/fragment_padding_medium"
+        android:layout_marginHorizontal="@dimen/fragment_padding_medium"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/mod_library_context_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_11ssp"
+            android:textStyle="italic"
+            android:text="@string/mod_library_context_placeholder"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <!-- Search text -->
+        <EditText
+            android:id="@+id/mod_library_edittext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_line"
+            android:textSize="@dimen/_13ssp"
+            android:translationZ="2dp"
+            android:layout_marginTop="@dimen/padding_medium"
+
+            android:ems="10"
+            android:hint="Search mods (e.g., JEI, Sodium)"
+            android:inputType="text"
+            android:paddingHorizontal="@dimen/padding_heavy"
+            app:layout_constraintTop_toBottomOf="@id/mod_library_context_textview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <ProgressBar
+            android:id="@+id/mod_library_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/mod_library_edittext" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mod_library_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/_15sdp"
+        android:clipToPadding="false"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/mod_library_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/mod_library_list"
+        app:layout_constraintEnd_toEndOf="@+id/mod_library_list"
+        app:layout_constraintStart_toStartOf="@+id/mod_library_list"
+        app:layout_constraintTop_toTopOf="@+id/mod_library_list" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -172,6 +172,30 @@ public class NewJREUtil {
         return false;
     }
 
+    /**
+     * Blocking helper to make sure a compatible runtime is present before running something
+     * that needs a specific Java version (e.g. a Forge/NeoForge/Fabric installer jar).
+     * Meant to be called from a background thread, NOT the UI thread.
+     *
+     * @return the name of a runtime (as understood by {@link MultiRTUtils}) satisfying
+     *         {@code javaVersion}, or null if none could be found/downloaded.
+     */
+    public static String ensureRuntimeForVersion(Context activity, int javaVersion) {
+        String existing = MultiRTUtils.getNearestJreName(javaVersion);
+        if (existing != null) {
+            Runtime runtime = MultiRTUtils.read(existing);
+            if (runtime.javaVersion >= javaVersion) return existing;
+        }
+        if (!isJavaVersionAvailableForDownload(javaVersion)) return existing;
+        try {
+            tryDownloadRuntime(activity, javaVersion);
+        } catch (RuntimeException e) {
+            Log.e("NewJREAuto", "Automatic runtime download failed", e);
+            return existing;
+        }
+        return MultiRTUtils.getNearestJreName(javaVersion);
+    }
+
     private static String getJreSource(int javaVersion, String arch){
         return String.format("https://github.com/AngelAuraMC/angelauramc-openjdk-build/releases/download/download_jre%1$s/jre%1$s-android-%2$s.tar.xz", javaVersion, arch);
     }

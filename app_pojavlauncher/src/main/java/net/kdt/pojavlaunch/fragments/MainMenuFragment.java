@@ -79,7 +79,7 @@ public class MainMenuFragment extends Fragment {
                             Tools.configureSodiumOptimizations();
                             ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
                         })
-                        .setNegativeButton(R.string.global_cancel, null)
+                        .setNegativeButton(android.R.string.cancel, null)
                         .create();
                 sodiumWarningDialog.show();
             } else ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);

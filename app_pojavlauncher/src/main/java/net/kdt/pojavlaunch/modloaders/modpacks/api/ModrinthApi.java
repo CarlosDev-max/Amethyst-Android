@@ -56,6 +56,8 @@ public class ModrinthApi implements ModpackApi{
         facetString.append(String.format("[\"project_type:%s\"]", searchFilters.isModpack ? "modpack" : "mod"));
         if(searchFilters.mcVersion != null && !searchFilters.mcVersion.isEmpty())
             facetString.append(String.format(",[\"versions:%s\"]", searchFilters.mcVersion));
+        if(!searchFilters.isModpack && searchFilters.modLoader != null && !searchFilters.modLoader.isEmpty())
+            facetString.append(String.format(",[\"categories:%s\"]", searchFilters.modLoader));
         facetString.append("]");
         params.put("facets", facetString.toString());
         params.put("query", searchFilters.name);
@@ -99,6 +101,7 @@ public class ModrinthApi implements ModpackApi{
         String[] mcNames = new String[response.size()];
         String[] urls = new String[response.size()];
         String[] hashes = new String[response.size()];
+        int[] fileSizes = new int[response.size()];
         ModDetail.Dependencies[][] dependencies = new ModDetail.Dependencies[response.size()][];
 
         for (int i=0; i<response.size(); ++i) {
@@ -120,10 +123,12 @@ public class ModrinthApi implements ModpackApi{
             } catch (Exception ignored) {}
 
             mcNames[i] = version.get("game_versions").getAsJsonArray().get(0).getAsString();
-            urls[i] = version.get("files").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString();
+            JsonObject primaryFile = version.get("files").getAsJsonArray().get(0).getAsJsonObject();
+            urls[i] = primaryFile.get("url").getAsString();
+            JsonElement sizeElement = primaryFile.get("size");
+            fileSizes[i] = sizeElement != null && !sizeElement.isJsonNull() ? sizeElement.getAsInt() : 0;
             // Assume there may not be hashes, in case the API changes
-            JsonObject hashesMap = version.getAsJsonArray("files").get(0).getAsJsonObject()
-                    .get("hashes").getAsJsonObject();
+            JsonObject hashesMap = primaryFile.get("hashes").getAsJsonObject();
             if(hashesMap == null || hashesMap.get("sha1") == null){
                 hashes[i] = null;
                 continue;
@@ -132,7 +137,9 @@ public class ModrinthApi implements ModpackApi{
             hashes[i] = hashesMap.get("sha1").getAsString();
         }
 
-        return new ModDetail(item, names, ids, mcNames, urls, hashes, dependencies);
+        ModDetail detail = new ModDetail(item, names, ids, mcNames, urls, hashes, dependencies);
+        detail.versionFileSizes = fileSizes;
+        return detail;
     }
 
     private void fillInMissingModItemData(ModItem item) {

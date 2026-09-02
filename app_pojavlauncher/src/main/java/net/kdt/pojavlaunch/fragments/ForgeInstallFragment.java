@@ -58,7 +58,18 @@ public class ForgeInstallFragment extends ModVersionListFragment<List<String>> {
     @Override
     public void onDownloadFinished(Context context, File downloadedFile) {
         Intent modInstallerStartIntent = new Intent(context, JavaGUILauncherActivity.class);
-        ForgeUtils.addAutoInstallArgs(modInstallerStartIntent, downloadedFile, true);
+        String targetProfileKey = getTargetProfileKey();
+        // When editing an existing profile in-place, don't let the installer create a
+        // separate profile: just run the raw installer jar and let JavaGUILauncherActivity
+        // detect the newly created version and fix up our target profile once it's done.
+        if (targetProfileKey != null) {
+            modInstallerStartIntent
+                    .putExtra("javaArgs", "-jar " + downloadedFile.getAbsolutePath())
+                    .putExtra("openLogOutput", true)
+                    .putExtra(JavaGUILauncherActivity.EXTRA_TARGET_PROFILE_KEY, targetProfileKey);
+        } else {
+            ForgeUtils.addAutoInstallArgs(modInstallerStartIntent, downloadedFile, true);
+        }
         context.startActivity(modInstallerStartIntent);
     }
 }

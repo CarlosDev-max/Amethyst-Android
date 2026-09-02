@@ -13,6 +13,8 @@ public class ModDetail extends ModItem {
     /* SHA 1 hashes, null if a hash is unavailable */
     public String[] versionHashes;
     public String[] versionIds;
+    /* File size in bytes, 0 if unavailable. Used only to size download progress bars. */
+    public int[] versionFileSizes;
     public Dependencies[][] dependencies;
     public ModDetail(ModItem item, String[] versionNames, String[] versionIds, String[] mcVersionNames, String[] versionUrls, String[] hashes, Dependencies[][] dependencies) {
         super(item.apiSource, item.isModpack, item.id, item.title, item.description, item.imageUrl);

@@ -15,6 +15,7 @@ import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchResult;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
+import net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper;
 
 import java.io.IOException;
 import java.io.File;
@@ -76,6 +77,38 @@ public interface ModpackApi {
      * @param selectedVersion The selected version
      */
     ModLoader installMod(ModDetail modDetail, int selectedVersion) throws IOException;
+
+    /**
+     * Downloads a single mod's jar (NOT a modpack, NOT a mod loader) straight into an existing
+     * profile's mods/ folder. Used by the mod library screen, where the user is browsing
+     * individual mods to add to a profile that's already set up with a compatible loader.
+     * @param modDetail The mod detail data (isModpack must be false)
+     * @param selectedVersion The selected version index, as in installMod
+     * @param profileGameDir The profile's .minecraft-style game directory (mods/ is created under it)
+     */
+    default void downloadModToProfile(Context context, ModDetail modDetail, int selectedVersion, File profileGameDir) {
+        ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_waiting);
+        PojavApplication.sExecutorService.execute(() -> {
+            try {
+                String url = modDetail.versionUrls[selectedVersion];
+                String sha1 = modDetail.versionHashes[selectedVersion];
+                int fileSize = modDetail.versionFileSizes != null ? modDetail.versionFileSizes[selectedVersion] : 0;
+                String fileName = url.substring(url.lastIndexOf('/') + 1);
+                File modsDir = new File(profileGameDir, "mods");
+                if (!modsDir.exists() && !modsDir.mkdirs())
+                    throw new IOException("Could not create mods directory: " + modsDir);
+
+                ModDownloader downloader = new ModDownloader(modsDir, fileSize <= 0);
+                downloader.submitDownload(fileSize, fileName, sha1, url);
+                downloader.awaitFinish(new DownloaderProgressWrapper(
+                        R.string.modpack_download_downloading_mods, ProgressLayout.INSTALL_MODPACK));
+                Tools.runOnUiThread(() -> ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK));
+            } catch (IOException e) {
+                Tools.runOnUiThread(() -> ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK));
+                Tools.showErrorRemote(context, R.string.modpack_install_download_failed, e);
+            }
+        });
+    }
 
     /**
      * Imports the mod(pack) from a file.

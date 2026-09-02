@@ -103,6 +103,52 @@
 
 
             <TextView
+                android:id="@+id/textView_modloader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pedit_modloader"
+                app:layout_constraintBottom_toTopOf="@+id/vprof_editor_modloader_spinner"
+                app:layout_constraintStart_toStartOf="@+id/vprof_editor_modloader_spinner" />
+
+            <Spinner
+                android:id="@+id/vprof_editor_modloader_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="@dimen/padding_medium"
+                android:background="@drawable/background_line"
+                android:paddingHorizontal="@dimen/padding_heavy"
+                android:paddingVertical="0px"
+
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_modloader_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_version_spinner"
+                tools:paddingVertical="@dimen/_12sdp" />
+
+            <Button
+                android:id="@+id/vprof_editor_modloader_button"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingHorizontal="@dimen/padding_large"
+                android:paddingVertical="0px"
+
+                android:text="@string/pedit_modloader_install_button"
+
+                app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_modloader_spinner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/vprof_editor_modloader_spinner" />
+
+            <Button
+                android:id="@+id/vprof_editor_mod_library_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_medium"
+                android:text="@string/mod_library_button"
+
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_modloader_spinner" />
+
+
+            <TextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,7 +170,7 @@
 
                 app:layout_constraintEnd_toStartOf="@id/vprof_editor_ctrl_button"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_version_spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_mod_library_button" />
 
             <Button
                 android:id="@+id/vprof_editor_ctrl_button"
