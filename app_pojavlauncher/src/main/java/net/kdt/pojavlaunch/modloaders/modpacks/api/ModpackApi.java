@@ -50,6 +50,19 @@ public interface ModpackApi {
     ModDetail getModDetails(ModItem item);
 
     /**
+     * Fetch the mod details, filtering the per-project version list with the search
+     * filters (mod loader, Minecraft version) that produced this item. Implementations
+     * that do not support filtering may ignore the filters and behave like
+     * {@link #getModDetails(ModItem)}.
+     * @param item The mod item that was selected
+     * @param searchFilters The filters of the search that produced this item, may be null
+     * @return Detailed data about a mod(pack)
+     */
+    default ModDetail getModDetails(ModItem item, SearchFilters searchFilters) {
+        return getModDetails(item);
+    }
+
+    /**
      * Download and install the mod(pack)
      * @param modDetail The mod detail data
      * @param selectedVersion The selected version

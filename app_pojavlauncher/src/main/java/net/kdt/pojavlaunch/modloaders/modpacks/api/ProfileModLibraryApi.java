@@ -41,6 +41,11 @@ public class ProfileModLibraryApi implements ModpackApi {
     }
 
     @Override
+    public ModDetail getModDetails(net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem item, SearchFilters searchFilters) {
+        return mDelegate.getModDetails(item, searchFilters);
+    }
+
+    @Override
     public void handleInstallation(Context context, ModDetail modDetail, int selectedVersion) {
         // The mod library only ever deals with individual mods, never modpacks - always
         // install straight into the target profile's mods/ folder.

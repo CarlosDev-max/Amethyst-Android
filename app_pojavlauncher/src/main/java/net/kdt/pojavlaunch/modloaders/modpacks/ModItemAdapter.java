@@ -198,7 +198,9 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                          * If we didn't use a Future, we would have extended a ViewHolder with completely unrelated content
                          * or with an error that has never actually happened
                          */
-                        mModDetail = mModpackApi.getModDetails(mModItem);
+                        // Pass the filters of the current search so the version list is
+                        // filtered consistently, without shared mutable state on the API.
+                        mModDetail = mModpackApi.getModDetails(mModItem, mSearchFilters);
                         System.out.println(mModDetail);
                         Tools.runOnUiThread(() -> {
                             /*
