@@ -163,15 +163,15 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
         try {
 
             placeMouseAt(CallbackBridge.physicalWidth / 2f, CallbackBridge.physicalHeight / 2f);
+            // External entry points (VIEW/SEND from other apps) usually carry no extras,
+            // only the data Uri, so the extras gate must not finish() before the external
+            // JAR branch is consulted.
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                finish();
-                return;
-            }
-            final String javaArgs = extras.getString("javaArgs");
-            final Uri resourceUri = (Uri) extras.getParcelable("modUri");
-            mTargetProfileKey = extras.getString(EXTRA_TARGET_PROFILE_KEY);
-            if(extras.getBoolean("openLogOutput", false)) openLogOutput(null);
+            final String javaArgs = extras == null ? null : extras.getString("javaArgs");
+            final Uri resourceUri = extras == null ? null : (Uri) extras.getParcelable("modUri");
+            if(extras != null) mTargetProfileKey = extras.getString(EXTRA_TARGET_PROFILE_KEY);
+            if(extras != null && extras.getBoolean("openLogOutput", false)) openLogOutput(null);
+            Uri externalJarUri = javaArgs == null && resourceUri == null ? resolveExternalJarUri() : null;
             if (javaArgs != null) {
                 mVersionsSnapshotBeforeInstall = ModloaderProfileFixupUtils.snapshotVersions();
                 startModInstaller(null, javaArgs);
@@ -181,22 +181,19 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
                     startModInstallerWithUri(resourceUri);
                     runOnUiThread(barrierDialog::dismiss);
                 });
-            } else {
-                // Handle direct JAR file opening from external apps (VIEW from file managers,
+            } else if(externalJarUri != null) {
+                // Direct JAR opening from external apps (VIEW from file managers,
                 // SEND with EXTRA_STREAM). This is an unattended entry point, so ask for
                 // confirmation before running anything.
-                Uri intentData = resolveExternalJarUri();
-                if (intentData != null) {
-                    new AlertDialog.Builder(this)
-                            .setTitle(R.string.external_jar_confirm_title)
-                            .setMessage(R.string.external_jar_confirm_message)
-                            .setPositiveButton(android.R.string.ok, (d, w) -> beginExternalJarInstall(intentData))
-                            .setNegativeButton(android.R.string.cancel, (d, w) -> finish())
-                            .setCancelable(false)
-                            .show();
-                } else {
-                    finish();
-                }
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.external_jar_confirm_title)
+                        .setMessage(R.string.external_jar_confirm_message)
+                        .setPositiveButton(android.R.string.ok, (d, w) -> beginExternalJarInstall(externalJarUri))
+                        .setNegativeButton(android.R.string.cancel, (d, w) -> finish())
+                        .setCancelable(false)
+                        .show();
+            } else {
+                finish();
             }
         } catch (Throwable th) {
             Tools.showError(this, th, true);
