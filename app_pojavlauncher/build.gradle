@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application' version '9.3.1'
+    id 'com.android.application'
 }
 
 static def getDate() { return new Date().format('yyyyMMdd') }
@@ -72,6 +72,10 @@ configurations {
     }
 }
 
+// The release keystore is not committed to the repository; only configure
+// customRelease (and wire it into buildTypes) when the file is present.
+def hasReleaseKeystore = file("aamc_upload.jks").exists()
+
 android {
     namespace 'net.kdt.pojavlaunch'
 
@@ -85,11 +89,15 @@ android {
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
-        customRelease {
-            storeFile file("aamc_upload.jks")
-            storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
-            keyAlias "android_github_release"
-            keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+        // Only configure customRelease when the keystore exists, so projects
+        // without the file still configure successfully
+        if (hasReleaseKeystore) {
+            customRelease {
+                storeFile file("aamc_upload.jks")
+                storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+                keyAlias "android_github_release"
+                keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+            }
         }
         googlePlayBuild {
             storeFile file("upload.jks")
@@ -142,7 +150,9 @@ android {
             // Don't set to true or java.awt will be a.a or something similar.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.customRelease
+            if (hasReleaseKeystore) {
+                signingConfig signingConfigs.customRelease
+            }
             // defaultConfig already set
             // multiDexEnabled = true
             // debuggable = true
