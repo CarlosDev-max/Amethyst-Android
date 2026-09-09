@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.content.Intent;
 
 import net.kdt.pojavlaunch.Tools;
@@ -26,7 +28,7 @@ public class ForgeUtils {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             saxParser = parserFactory.newSAXParser();
         }catch (SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             // if we cant make a parser we might as well not even try to parse anything
             return null;
         }
@@ -44,7 +46,7 @@ public class ForgeUtils {
                 }
             });
         }catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return null;
         }
 

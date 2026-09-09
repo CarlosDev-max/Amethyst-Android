@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.app.Activity;
 
 import com.kdt.mcgui.ProgressLayout;
@@ -97,7 +99,7 @@ public class OptiFineDownloadTask implements Runnable, Tools.DownloaderFeedback,
                 mMinecraftDownloadLock.wait();
             }
         }catch (InterruptedException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
         return mDownloaderThrowable == null;
     }

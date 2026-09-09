@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import com.google.gson.JsonSyntaxException;
 
 import net.kdt.pojavlaunch.Tools;
@@ -56,7 +58,7 @@ public class FabriclikeUtils {
                     }});
 
         }catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
         return null;
     }
@@ -100,7 +102,7 @@ public class FabriclikeUtils {
         try {
             return Tools.GLOBAL_GSON.fromJson(jsonArrayIn, FabricVersion[].class);
         }catch (JsonSyntaxException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             throw new DownloadUtils.ParseException(null);
         }
     }

@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.multirt;
 
+import net.kdt.pojavlaunch.Logger;
+
 import static net.kdt.pojavlaunch.Architecture.getDeviceArchitecture;
 import static net.kdt.pojavlaunch.Tools.NATIVE_LIB_DIR;
 import static org.apache.commons.io.FileUtils.listFiles;
@@ -142,7 +144,7 @@ public class MultiRTUtils {
                 return null;
             }
         }catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return null;
         }
     }

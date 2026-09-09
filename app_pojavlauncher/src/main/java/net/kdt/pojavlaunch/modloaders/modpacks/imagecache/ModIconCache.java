@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders.modpacks.imagecache;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.util.Base64;
 import android.util.Log;
 
@@ -102,7 +104,7 @@ public class ModIconCache {
                 return "data:image/png;base64,"+ Base64.encodeToString(imageBytes, Base64.DEFAULT);
             }
         }catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return null;
         }
     }

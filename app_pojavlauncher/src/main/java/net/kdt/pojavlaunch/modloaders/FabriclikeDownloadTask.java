@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import com.kdt.mcgui.ProgressLayout;
 
 import net.kdt.pojavlaunch.R;
@@ -57,7 +59,7 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
             JSONObject fabricJsonObject = new JSONObject(fabricJson);
             versionId = fabricJsonObject.getString("id");
         }catch (JSONException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return false;
         }
         File versionJsonDir = new File(Tools.DIR_HOME_VERSION, versionId);

@@ -78,11 +78,27 @@ jobs:
           ./scripts/languagelist_updater.sh
           mkdir out
 
+      - name: Restore release keystore (optional)
+        env:
+          GPLAY_KEYSTORE_B64: ${{ secrets.GPLAY_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$GPLAY_KEYSTORE_B64" ]; then
+            echo "$GPLAY_KEYSTORE_B64" | base64 -d > app_pojavlauncher/aamc_upload.jks
+            echo "Release keystore restored from secret"
+          else
+            echo "GPLAY_KEYSTORE_B64 not set: the release APK will be built unsigned"
+          fi
+
       - name: Build Release .apk
         run: |
           # Build the launcher
           gradle :app_pojavlauncher:assembleRelease
-          mv app_pojavlauncher/build/outputs/apk/release/app_pojavlauncher-release.apk out/app-release.apk
+          if [ -f app_pojavlauncher/build/outputs/apk/release/app_pojavlauncher-release.apk ]; then
+            mv app_pojavlauncher/build/outputs/apk/release/app_pojavlauncher-release.apk out/app-release.apk
+          else
+            # No release keystore: AGP produces an unsigned APK with a different name
+            mv app_pojavlauncher/build/outputs/apk/release/app_pojavlauncher-release-unsigned.apk out/app-release.apk
+          fi
 
       - name: Gen md5sums
         run: |

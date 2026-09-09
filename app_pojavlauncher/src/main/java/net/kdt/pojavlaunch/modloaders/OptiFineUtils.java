@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.content.Intent;
 
 import net.kdt.pojavlaunch.Tools;
@@ -16,7 +18,7 @@ public class OptiFineUtils {
             return DownloadUtils.downloadStringCached("https://optifine.net/downloads",
                     "of_downloads_page", new OptiFineScraper());
         }catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return null;
         }
     }

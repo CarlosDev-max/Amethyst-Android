@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders.modpacks.api;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
@@ -83,7 +85,7 @@ public class CommonApi implements ModpackApi {
                 totalSize += searchResult.totalResultCount;
             }catch (Exception e) {
                 cancelAllFutures(futures);
-                e.printStackTrace();
+                Logger.appendToLog(e);
                 return null;
             }
         }

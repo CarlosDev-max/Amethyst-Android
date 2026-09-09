@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.lifecycle;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -54,7 +56,7 @@ public abstract class LifecycleAwareAlertDialog implements LifecycleEventObserve
     abstract protected void dialogHidden(boolean lifecycleEnded);
 
     protected void dispatchDialogHidden() {
-        new Exception().printStackTrace();
+        Logger.appendToLog(new Exception("Dialog hidden"));
         dialogHidden(mLifecycleEnded);
         mLifecycle.removeObserver(this);
     }

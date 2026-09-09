@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.prefs.screens;
 
+import net.kdt.pojavlaunch.Logger;
+
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 
 import android.content.SharedPreferences;
@@ -89,7 +91,7 @@ public class LauncherPreferenceRendererSettingsFragment extends LauncherPreferen
                 this.GLSLCachePreference.setSummary(getString(R.string.global_off));
             } else this.GLSLCachePreference.setSummary(this.GLSLCachePreference.getText() + " MB");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
     }
 }

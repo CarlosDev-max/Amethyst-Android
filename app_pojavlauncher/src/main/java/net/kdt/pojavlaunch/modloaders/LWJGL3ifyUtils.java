@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
@@ -211,7 +213,7 @@ public class LWJGL3ifyUtils {
                 fos.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
     }
 

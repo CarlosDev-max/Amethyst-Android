@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.utils;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -44,7 +46,7 @@ public class DownloadUtils {
                 try {
                     is.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.appendToLog(e);
                 }
             }
         }

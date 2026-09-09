@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders.modpacks.api;
 
+import net.kdt.pojavlaunch.Logger;
+
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -68,7 +70,7 @@ public class ApiHandler {
             conn.disconnect();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
         return null;
     }
@@ -98,7 +100,7 @@ public class ApiHandler {
             conn.disconnect();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
         return null;
     }

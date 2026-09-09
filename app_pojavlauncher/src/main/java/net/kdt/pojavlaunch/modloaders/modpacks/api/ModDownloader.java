@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.modloaders.modpacks.api;
 
+import net.kdt.pojavlaunch.Logger;
+
 import androidx.annotation.Nullable;
 
 import net.kdt.pojavlaunch.Tools;
@@ -63,7 +65,7 @@ public class ModDownloader {
                 }
             }
         }catch (InterruptedException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
     }
 
@@ -144,7 +146,7 @@ public class ModDownloader {
                 } catch (InterruptedIOException e) {
                     throw new InterruptedException();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.appendToLog(e);
                     exception = e;
                 }
                 if(!mUseFileCount) {
