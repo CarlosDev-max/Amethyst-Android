@@ -45,6 +45,10 @@ public class AsyncVersionList {
                     versionList = Tools.GLOBAL_GSON.fromJson(jsonReader, JMinecraftVersionList.class);
                 } catch (FileNotFoundException e) {
                     Logger.appendToLog(e);
+                } catch (IOException e) {
+                    // The implicit JsonReader.close() declares IOException; a failed close
+                    // means the cached stream broke - keep whatever was parsed.
+                    Logger.appendToLog(e);
                 } catch (JsonIOException | JsonSyntaxException e) {
                     Logger.appendToLog(e);
                     versionFile.delete();
