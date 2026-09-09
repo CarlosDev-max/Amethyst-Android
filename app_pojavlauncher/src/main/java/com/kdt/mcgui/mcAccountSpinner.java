@@ -148,6 +148,23 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
     };
 
 
+    /** Whether the user genuinely interacted with the spinner (touch or click).
+     * Consumed by onItemSelected() so programmatic selections do not navigate. */
+    private boolean mUserInteracted;
+
+    @Override
+    public boolean performClick() {
+        mUserInteracted = true;
+        return super.performClick();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if(ev.getAction() == MotionEvent.ACTION_UP) mUserInteracted = true;
+        return super.onTouchEvent(ev);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void init(){
         // Set visual properties
@@ -167,7 +184,15 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
     @Override
     public final void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position == 0){  // Add account button
-            ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
+            // Android fires onItemSelected(0) automatically after the first layout
+            // (setAdapter + setSelection), and pickAccount() can set position 0
+            // programmatically (e.g. the corrupted-account dialog). Only open the auth
+            // screen on a genuine user interaction; with 0 accounts the tap is already
+            // handled by setNoAccountBehavior().
+            if(mUserInteracted) {
+                mUserInteracted = false;
+                ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
+            }
             return;
         }
 
@@ -352,9 +377,9 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
             }
         }
 
-        if(oldBitmapDrawable != null){
-            oldBitmapDrawable.getBitmap().recycle();
-        }
+        // Deliberately not recycling the old bitmap: getSkinFace() may return the
+        // account's cached bitmap (mFaceCache), which is still owned by the account.
+        // Recycling it here corrupts the cache and crashes the next use.
     }
 
     private class AccountAdapter extends ArrayAdapter<String> {
