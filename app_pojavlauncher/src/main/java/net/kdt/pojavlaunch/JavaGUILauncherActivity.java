@@ -5,6 +5,7 @@ import static net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -181,14 +182,18 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
                     runOnUiThread(barrierDialog::dismiss);
                 });
             } else {
-                // Handle direct JAR file opening from file managers
-                Uri intentData = getIntent().getData();
+                // Handle direct JAR file opening from external apps (VIEW from file managers,
+                // SEND with EXTRA_STREAM). This is an unattended entry point, so ask for
+                // confirmation before running anything.
+                Uri intentData = resolveExternalJarUri();
                 if (intentData != null) {
-                    ProgressDialog barrierDialog = Tools.getWaitingDialog(this, R.string.multirt_progress_caching);
-                    PojavApplication.sExecutorService.execute(()->{
-                        startModInstallerWithUri(intentData);
-                        runOnUiThread(barrierDialog::dismiss);
-                    });
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.external_jar_confirm_title)
+                            .setMessage(R.string.external_jar_confirm_message)
+                            .setPositiveButton(android.R.string.ok, (d, w) -> beginExternalJarInstall(intentData))
+                            .setNegativeButton(android.R.string.cancel, (d, w) -> finish())
+                            .setCancelable(false)
+                            .show();
                 } else {
                     finish();
                 }
@@ -206,9 +211,29 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
         });
     }
 
+    /** @return the Uri of the JAR to open from an external intent: EXTRA_STREAM for
+     * ACTION_SEND (falling back to the intent data), or the intent data for other actions. */
+    private Uri resolveExternalJarUri() {
+        if(Intent.ACTION_SEND.equals(getIntent().getAction())) {
+            Uri streamUri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+            if(streamUri != null) return streamUri;
+        }
+        return getIntent().getData();
+    }
+
+    /** Copy the external JAR to the cache and start the installer on a worker thread,
+     * with a barrier dialog so the user cannot interact while it is being cached. */
+    private void beginExternalJarInstall(Uri uri) {
+        ProgressDialog barrierDialog = Tools.getWaitingDialog(this, R.string.multirt_progress_caching);
+        PojavApplication.sExecutorService.execute(()->{
+            startModInstallerWithUri(uri);
+            runOnUiThread(barrierDialog::dismiss);
+        });
+    }
+
     private void startModInstallerWithUri(Uri uri) {
+        File cacheFile = new File(getCacheDir(), "mod-installer-temp");
         try {
-            File cacheFile = new File(getCacheDir(), "mod-installer-temp");
             InputStream contentStream = getContentResolver().openInputStream(uri);
             if(contentStream == null) throw new IOException("Failed to open content stream");
             try (FileOutputStream fileOutputStream = new FileOutputStream(cacheFile)) {
@@ -216,7 +241,11 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
             }
             contentStream.close();
             startModInstaller(cacheFile, null);
-        }catch (IOException e) {
+        }catch (IOException | SecurityException e) {
+            // SecurityException may be thrown by openInputStream on non-granted URIs
+            // (FileNotFoundException is covered by IOException). Remove the partially
+            // copied temporary file, since the install never got started.
+            cacheFile.delete();
             Tools.showError(this, e, true);
         }
     }
@@ -253,11 +282,19 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
      * @return the name of the newly installed runtime, or null if the download failed.
      */
     private String tryAutoDownloadRuntime(int javaVersion) {
-        ProgressDialog progressDialog = Tools.getWaitingDialog(this, R.string.modinstall_downloading_jre);
+        // The dialog must be created and shown on the UI thread: this method runs on the
+        // "JREMainThread" background thread, where show() would throw a RuntimeException
+        // for missing a Looper. Both runOnUiThread() calls are posted to the same UI
+        // queue, so the show is always processed before the dismiss.
+        final ProgressDialog[] progressDialogHolder = new ProgressDialog[1];
+        runOnUiThread(() -> progressDialogHolder[0] = Tools.getWaitingDialog(this, R.string.modinstall_downloading_jre));
         try {
             return NewJREUtil.ensureRuntimeForVersion(this, javaVersion);
         } finally {
-            runOnUiThread(progressDialog::dismiss);
+            runOnUiThread(() -> {
+                // Tolerate the dialog not being created yet (e.g. near-instant downloads)
+                if(progressDialogHolder[0] != null) progressDialogHolder[0].dismiss();
+            });
         }
     }
 

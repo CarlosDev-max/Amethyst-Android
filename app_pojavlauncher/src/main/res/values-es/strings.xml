@@ -353,4 +353,7 @@
     <string name="modloader_dl_install_neoforge">Crear perfil de Neoforge</string>
     <string name="neoforge_dl_select_version">Seleccionar versión de NeoForge</string>
     <string name="neoforge_dl_no_installer">Lo sentimos, pero esta versión de NeoForge no tiene un instalador, lo cual aún no está soportado.</string>
+    <string name="external_jar_confirm_title">&#191;Abrir archivo externo?</string>
+    <string name="external_jar_confirm_message">Esta app recibi&#243; este archivo (JAR) desde otra app. Ejecutarlo corre c&#243;digo con los permisos de esta app. &#191;Continuar?</string>
+
 </resources>

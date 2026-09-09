@@ -541,4 +541,7 @@
     <string name="import_modpack_json">Reading modpack info…</string>
     <string name="import_modpack_copy">Copying modpack file to cache… (%s MB/ %s MB)</string>
 
+    <string name="external_jar_confirm_title">Open external file?</string>
+    <string name="external_jar_confirm_message">This file (JAR) was received from another app. Running it will execute code with the permissions of this app. Continue?</string>
+
 </resources>
