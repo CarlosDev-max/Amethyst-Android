@@ -75,7 +75,7 @@ configurations {
 android {
     namespace 'net.kdt.pojavlaunch'
 
-    compileSdk = 37
+    compileSdk = 35
 
 
     signingConfigs {
@@ -102,7 +102,7 @@ android {
     defaultConfig {
         applicationId "org.angelauramc.amethyst"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 10000000
         versionName getVersionName()
         multiDexEnabled true //important
