@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.tasks;
 
+import net.kdt.pojavlaunch.Logger;
+
 import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 import static net.kdt.pojavlaunch.utils.DownloadUtils.downloadString;
 
@@ -34,17 +36,17 @@ public class AsyncVersionList {
                 }
             }catch (Exception e){
                 Log.e("AsyncVersionList", "Refreshing version list failed :" + e);
-                e.printStackTrace();
+                Logger.appendToLog(e);
             }
 
             // Fallback when no network or not needed
             if (versionList == null) {
-                try {
-                    versionList = Tools.GLOBAL_GSON.fromJson(new JsonReader(new FileReader(versionFile)), JMinecraftVersionList.class);
+                try (JsonReader jsonReader = new JsonReader(new FileReader(versionFile))) {
+                    versionList = Tools.GLOBAL_GSON.fromJson(jsonReader, JMinecraftVersionList.class);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    Logger.appendToLog(e);
                 } catch (JsonIOException | JsonSyntaxException e) {
-                    e.printStackTrace();
+                    Logger.appendToLog(e);
                     versionFile.delete();
                     if(!secondPass)
                         getVersionList(listener, true);

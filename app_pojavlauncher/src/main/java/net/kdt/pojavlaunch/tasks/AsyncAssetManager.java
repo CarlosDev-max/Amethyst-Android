@@ -120,16 +120,18 @@ public class AsyncAssetManager {
         String[] lwjglVersions = {"3.3.3", "3.4.1"};
         for (String lwjglVer : lwjglVersions) {
             File versionFile = new File(Tools.DIR_GAME_HOME + String.format("/lwjgl3/%s/version", lwjglVer));
-            InputStream is = am.open("components/lwjgl3/" + lwjglVer + "/version");
             String pathToLwjglNatives = String.format("lwjgl-%s-natives/", lwjglVer) + sArch;
 
             boolean shouldUpdate = true;
-            if (versionFile.exists()) {
-                FileInputStream fis = new FileInputStream(versionFile);
-                String release1 = Tools.read(is);
-                String release2 = Tools.read(fis);
-                if (release1.equals(release2))
-                    shouldUpdate = false;
+            try (InputStream is = am.open("components/lwjgl3/" + lwjglVer + "/version")) {
+                if (versionFile.exists()) {
+                    try (FileInputStream fis = new FileInputStream(versionFile)) {
+                        String release1 = Tools.read(is);
+                        String release2 = Tools.read(fis);
+                        if (release1.equals(release2))
+                            shouldUpdate = false;
+                    }
+                }
             }
 
             if (shouldUpdate) {
@@ -149,7 +151,6 @@ public class AsyncAssetManager {
         String rootDir = privateDirectory ? Tools.DIR_DATA : Tools.DIR_GAME_HOME;
 
         File versionFile = new File(rootDir + "/" + component + "/version");
-        InputStream is = am.open("components/" + component + "/version");
         if(!versionFile.exists()) {
             if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
                 FileUtils.deleteDirectory(versionFile.getParentFile());
@@ -162,21 +163,23 @@ public class AsyncAssetManager {
                 Tools.copyAssetFile(ctx, "components/" + component + "/" + s, rootDir + "/" + component, true);
             }
         } else {
-            FileInputStream fis = new FileInputStream(versionFile);
-            String release1 = Tools.read(is);
-            String release2 = Tools.read(fis);
-            if (!release1.equals(release2)) {
-                if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
-                    FileUtils.deleteDirectory(versionFile.getParentFile());
-                }
-                versionFile.getParentFile().mkdir();
+            try (InputStream is = am.open("components/" + component + "/version");
+                 FileInputStream fis = new FileInputStream(versionFile)) {
+                String release1 = Tools.read(is);
+                String release2 = Tools.read(fis);
+                if (!release1.equals(release2)) {
+                    if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
+                        FileUtils.deleteDirectory(versionFile.getParentFile());
+                    }
+                    versionFile.getParentFile().mkdir();
 
-                String[] fileList = am.list("components/" + component);
-                for (String fileName : fileList) {
-                    Tools.copyAssetFile(ctx, "components/" + component + "/" + fileName, rootDir + "/" + component, true);
+                    String[] fileList = am.list("components/" + component);
+                    for (String fileName : fileList) {
+                        Tools.copyAssetFile(ctx, "components/" + component + "/" + fileName, rootDir + "/" + component, true);
+                    }
+                } else {
+                    Log.i("UnpackPrep", component + ": Pack is up-to-date with the launcher, continuing...");
                 }
-            } else {
-                Log.i("UnpackPrep", component + ": Pack is up-to-date with the launcher, continuing...");
             }
         }
     }

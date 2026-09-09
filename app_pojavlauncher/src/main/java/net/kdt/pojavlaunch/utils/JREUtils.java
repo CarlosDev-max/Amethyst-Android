@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.utils;
 
+import net.kdt.pojavlaunch.Logger;
+
 import static net.kdt.pojavlaunch.Architecture.ARCH_X86;
 import static net.kdt.pojavlaunch.Architecture.archAsStringAndroid;
 import static net.kdt.pojavlaunch.Architecture.getDeviceArchitecture;
@@ -49,7 +51,7 @@ public class JREUtils {
                     Os.setenv("LD_LIBRARY_PATH", LD_LIBRARY_PATH, true);
                 }
             }catch (ErrnoException e) {
-                e.printStackTrace();
+                Logger.appendToLog(e);
             }
             return libName;
         }
@@ -294,14 +296,15 @@ public class JREUtils {
     private static void readCustomEnv(Map<String, String> envMap) throws IOException {
         File customEnvFile = new File(Tools.DIR_GAME_HOME, "custom_env.txt");
         if (customEnvFile.exists() && customEnvFile.isFile()) {
-            BufferedReader reader = new BufferedReader(new FileReader(customEnvFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Not use split() as only split first one
-                int index = line.indexOf("=");
-                envMap.put(line.substring(0, index), line.substring(index + 1));
+            try (BufferedReader reader = new BufferedReader(new FileReader(customEnvFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Not use split() as only split first one
+                    int index = line.indexOf("=");
+                    if (index < 0) continue; // Skip malformed lines without '='
+                    envMap.put(line.substring(0, index), line.substring(index + 1));
+                }
             }
-            reader.close();
         }
     }
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {

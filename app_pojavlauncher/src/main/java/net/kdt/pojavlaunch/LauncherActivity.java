@@ -91,8 +91,8 @@ public class LauncherActivity extends BaseActivity {
                                 }
                             }
                             File modpackFile = new File(Tools.DIR_CACHE, "import_modpack_placeholdername.cf");
-                            try (InputStream inputStream = getContentResolver().openInputStream(data)){
-                                FileOutputStream output = new FileOutputStream(modpackFile);
+                            try (InputStream inputStream = getContentResolver().openInputStream(data);
+                                 FileOutputStream output = new FileOutputStream(modpackFile)) {
                                 byte[] b = new byte[262144];
                                 int read;
                                 int readTotal = 0;
@@ -105,7 +105,6 @@ public class LauncherActivity extends BaseActivity {
                                     ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, progress, R.string.import_modpack_copy, readMB, totalMB);
                                 }
                                 output.flush();
-                                output.close();
                             }
                             ModLoader loaderInfo = new CommonApi(getString(R.string.curseforge_api_key)).importModpack(modpackFile);
                             modpackFile.delete();

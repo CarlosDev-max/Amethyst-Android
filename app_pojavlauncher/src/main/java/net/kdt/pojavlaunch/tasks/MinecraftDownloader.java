@@ -526,7 +526,13 @@ public class MinecraftDownloader {
                 mInternetUsageCounter.getAndAdd(40);
             } catch (IOException e) {
                 Log.i("MinecraftDownloader", "Failed to download hash", e);
-                if (cacheFile.exists() && new BufferedReader(new FileReader(cacheFile)).readLine() == null) {
+                boolean cacheHashEmpty = false;
+                if (cacheFile.exists()) {
+                    try (BufferedReader cacheReader = new BufferedReader(new FileReader(cacheFile))) {
+                        cacheHashEmpty = cacheReader.readLine() == null;
+                    }
+                }
+                if (cacheHashEmpty) {
                     Log.i("MinecraftDownloader", "Deleting failed hash download from cache: " + cacheFile);
                     cacheFile.delete();
                 }

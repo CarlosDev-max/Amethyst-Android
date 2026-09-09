@@ -116,8 +116,9 @@ public class FileListView extends LinearLayout
 
                     File[] listFile = path.listFiles();
                     FileListAdapter fileAdapter = new FileListAdapter(context);
+                    List<File> adapterItems = new ArrayList<>();
                     if(!path.equals(lockPath)){
-                        fileAdapter.add(new File(path, ".."));
+                        adapterItems.add(new File(path, ".."));
                     }
 
                     if(listFile != null && listFile.length != 0){
@@ -126,7 +127,7 @@ public class FileListView extends LinearLayout
                         for(File file : listFile){
                             if(file.isDirectory()){
                                 if(showFolders && ((!file.getName().startsWith(".")) || file.getName().equals(".minecraft")))
-                                    fileAdapter.add(file);
+                                    adapterItems.add(file);
                                 continue;
                             }
 
@@ -134,16 +135,19 @@ public class FileListView extends LinearLayout
                                 if(fileSuffixes.length > 0){
                                     for(String suffix : fileSuffixes){
                                         if(file.getName().endsWith("." + suffix)){
-                                            fileAdapter.add(file);
+                                            adapterItems.add(file);
                                             break;
                                         }
                                     }
                                 }else {
-                                    fileAdapter.add(file);
+                                    adapterItems.add(file);
                                 }
                             }
                         }
                     }
+                    // Build the whole list first and notify the adapter once: notifying
+                    // per item causes a full relayout for every entry on big folders.
+                    fileAdapter.setListItems(adapterItems);
                     mainLv.setAdapter(fileAdapter);
                     if(dialogTitleListener != null) dialogTitleListener.onChangeDialogTitle(path.getAbsolutePath());
                 } else {

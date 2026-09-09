@@ -1,4 +1,6 @@
 package net.kdt.pojavlaunch.utils;
+
+import net.kdt.pojavlaunch.Logger;
 import static org.lwjgl.glfw.CallbackBridge.windowHeight;
 import static org.lwjgl.glfw.CallbackBridge.windowWidth;
 
@@ -44,7 +46,7 @@ public class MCOptionUtils {
         if(!optionFile.exists()) {
             try { // Needed for new instances I guess  :think:
                 optionFile.createNewFile();
-            } catch (IOException e) { e.printStackTrace(); }
+            } catch (IOException e) { Logger.appendToLog(e); }
         }
 
         if(sFileObserver == null || !Objects.equals(sOptionFolderPath, folderPath)){
@@ -55,8 +57,7 @@ public class MCOptionUtils {
 
         sParameterMap.clear();
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(optionFile));
+        try (BufferedReader reader = new BufferedReader(new FileReader(optionFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 int firstColonIndex = line.indexOf(':');
@@ -66,7 +67,6 @@ public class MCOptionUtils {
                 }
                 sParameterMap.put(line.substring(0,firstColonIndex), line.substring(firstColonIndex+1));
             }
-            reader.close();
         } catch (IOException e) {
             Log.w(Tools.APP_NAME, "Could not load options.txt", e);
         }

@@ -220,7 +220,11 @@ public class NewJREUtil {
                     monitor
             );
             String jreName = "External-" + javaVersion;
-            MultiRTUtils.installRuntimeNamed(NATIVE_LIB_DIR, new FileInputStream(outputFile), jreName);
+            // Close the stream here as well: installRuntimeNamed() closes it on success,
+            // but if the unpack fails mid-way the caller must not leak the descriptor.
+            try (FileInputStream runtimeStream = new FileInputStream(outputFile)) {
+                MultiRTUtils.installRuntimeNamed(NATIVE_LIB_DIR, runtimeStream, jreName);
+            }
             MultiRTUtils.postPrepare(jreName);
             outputFile.delete();
         } catch (IOException e) {

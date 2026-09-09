@@ -130,16 +130,12 @@ public class ImportControlActivity extends Activity {
      * Copy a the file from the Intent data with a provided name into the controlmap folder.
      */
     private void importControlFile(){
-        InputStream is;
-        try {
-            is = getContentResolver().openInputStream(mUriData);
-            OutputStream os = new FileOutputStream(Tools.CTRLMAP_PATH + "/" + "TMP_IMPORT_FILE" + ".json");
+        try (InputStream is = getContentResolver().openInputStream(mUriData);
+             OutputStream os = new FileOutputStream(Tools.CTRLMAP_PATH + "/" + "TMP_IMPORT_FILE" + ".json")) {
+            if(is == null) throw new IOException("Failed to open the input stream for the control map import");
             IOUtils.copy(is, os);
-
-            os.close();
-            is.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
         }
     }
 
@@ -190,7 +186,7 @@ public class ImportControlActivity extends Activity {
             JSONObject layoutJobj = new JSONObject(jsonLayoutData);
             return layoutJobj.has("version") && layoutJobj.has("mControlDataList");
         }catch (JSONException | IOException e) {
-            e.printStackTrace();
+            Logger.appendToLog(e);
             return false;
         }
     }
