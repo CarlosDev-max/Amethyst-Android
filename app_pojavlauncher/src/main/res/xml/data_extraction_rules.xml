@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Excludes launcher-internal data from cloud backups and device-to-device transfers:
+  account JSONs contain OAuth tokens, and runtimes are multi-hundred-MB redownloadable data.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="accounts/" />
+        <exclude domain="file" path="runtimes/" />
+        <exclude domain="external" path="accounts/" />
+        <exclude domain="external" path="runtimes/" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="accounts/" />
+        <exclude domain="file" path="runtimes/" />
+        <exclude domain="external" path="accounts/" />
+        <exclude domain="external" path="runtimes/" />
+    </device-transfer>
+</data-extraction-rules>
