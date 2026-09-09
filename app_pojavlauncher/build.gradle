@@ -92,11 +92,23 @@ android {
         // Only configure customRelease when the keystore exists, so projects
         // without the file still configure successfully
         if (hasReleaseKeystore) {
+            // The release keystore was ROTATED (2026-09): the old aamc_upload.jks is burned
+            // (it lived in git history) and must never be reused. CI passes the password via
+            // env; local builds fall back to local.properties (gitignored). Env always wins.
+            def releaseKeystorePassword = System.getenv("GPLAY_KEYSTORE_PASSWORD")
+            if (releaseKeystorePassword == null || releaseKeystorePassword.isEmpty()) {
+                def localProps = new Properties()
+                def localPropsFile = rootProject.file("local.properties")
+                if (localPropsFile.exists()) {
+                    localPropsFile.withInputStream { localProps.load(it) }
+                    releaseKeystorePassword = localProps.getProperty("GPLAY_KEYSTORE_PASSWORD")
+                }
+            }
             customRelease {
                 storeFile file("aamc_upload.jks")
-                storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+                storePassword releaseKeystorePassword
                 keyAlias "android_github_release"
-                keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+                keyPassword releaseKeystorePassword
             }
         }
         googlePlayBuild {
