@@ -14,6 +14,17 @@ public class Logger {
     /** Print the text to the log file if not censored */
     public static native void appendToLog(String text);
 
+    /** Append the stack trace of a throwable to the log file */
+    public static void appendToLog(Throwable throwable) {
+        try {
+            appendToLog(Tools.printToString(throwable));
+        } catch (UnsatisfiedLinkError e) {
+            // The native library may not be loaded yet this early in the app lifecycle,
+            // fall back to the standard error stream instead of crashing the caller
+            throwable.printStackTrace();
+        }
+    }
+
     /** Reset the log file, effectively erasing any previous logs */
     public static native void begin(String logFilePath);
 

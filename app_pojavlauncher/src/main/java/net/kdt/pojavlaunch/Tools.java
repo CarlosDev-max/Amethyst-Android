@@ -1158,7 +1158,7 @@ public final class Tools {
             ContextExecutor.execute((ContextExecutorTask) e);
             return;
         }
-        e.printStackTrace();
+        Logger.appendToLog(e);
 
         Runnable runnable = () -> {
             final String errMsg = showMore ? printToString(e) : rolledMessage != null ? rolledMessage : e.getMessage();
@@ -1190,7 +1190,7 @@ public final class Tools {
             try {
                 builder.show();
             } catch (Throwable th) {
-                th.printStackTrace();
+                Logger.appendToLog(th);
             }
         };
 
@@ -1648,7 +1648,8 @@ public final class Tools {
         builder.show();
     }
 
-    /** Display and return a progress dialog, instructing to wait */
+    /** Display and return a progress dialog, instructing to wait.
+     * Must be called from the UI thread, since the dialog is shown right away */
     public static ProgressDialog getWaitingDialog(Context ctx, int message){
         final ProgressDialog barrier = new ProgressDialog(ctx);
         barrier.setMessage(ctx.getString(message));
