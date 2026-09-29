@@ -44,6 +44,8 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
     public static final String ARG_GAME_DIR = "game_dir";
     /** String extra: profile name/title, only used to label the screen. */
     public static final String ARG_PROFILE_TITLE = "profile_title";
+    /** String extra: Modrinth project type to browse ("mod", "shader", "resourcepack", "datapack"). */
+    public static final String ARG_PROJECT_TYPE = "project_type";
 
     private RecyclerView mRecyclerview;
     private ModItemAdapter mModItemAdapter;
@@ -64,6 +66,7 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
 
     private ModpackApi mModpackApi;
     private final SearchFilters mSearchFilters = new SearchFilters();
+    private String mProjectType = "mod";
     private java.util.Timer mSearchDebounceTimer;  // Track debounce timer for cleanup
 
     public ModLibraryFragment() {
@@ -81,13 +84,19 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
         // one of the upstream APIs is unavailable or filtered out for the profile.
         Bundle args = getArguments();
         if (args != null) {
+            mProjectType = normalizeProjectType(args.getString(ARG_PROJECT_TYPE, "mod"));
+            mSearchFilters.projectType = mProjectType;
             mSearchFilters.mcVersion = normalizeVersion(args.getString(ARG_MC_VERSION, ""));
-            mSearchFilters.modLoader = normalizeLoader(args.getString(ARG_MOD_LOADER, ""));
+            // Loader facets are only meaningful for mods/modpacks; shaders, resource packs and
+            // data packs are loader-agnostic, so passing a loader would wrongly filter results.
+            mSearchFilters.modLoader = "mod".equals(mProjectType)
+                    ? normalizeLoader(args.getString(ARG_MOD_LOADER, ""))
+                    : "";
             String gameDirPath = args.getString(ARG_GAME_DIR);
 
             if (gameDirPath != null && !gameDirPath.isEmpty()) {
                 File gameDir = new File(gameDirPath);
-                mModpackApi = new ProfileModLibraryApi(new ModrinthApi(), gameDir);
+                mModpackApi = new ProfileModLibraryApi(new ModrinthApi(), gameDir, mProjectType);
             } else {
                 android.util.Log.w(TAG, "onAttach: Missing gameDir argument, using Modrinth fallback");
                 mModpackApi = new ModrinthApi();
@@ -95,6 +104,32 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
         } else {
             android.util.Log.w(TAG, "onAttach: No arguments provided, using Modrinth fallback");
             mModpackApi = new ModrinthApi();
+        }
+    }
+
+    private String normalizeProjectType(String type) {
+        if (type == null) return "mod";
+        switch (type) {
+            case "shader":
+            case "resourcepack":
+            case "datapack":
+            case "mod":
+                return type;
+            default:
+                return "mod";
+        }
+    }
+
+    private int projectTypeLabel(String type) {
+        switch (type) {
+            case "shader":
+                return R.string.content_shaders;
+            case "resourcepack":
+                return R.string.content_resourcepacks;
+            case "datapack":
+                return R.string.content_datapacks;
+            default:
+                return R.string.content_mods;
         }
     }
 
@@ -136,12 +171,14 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
 
         mDefaultTextColor = mStatusTextView.getTextColors();
 
-        // Update context label (profile name + loader)
+        // Update context label (profile name + loader, or content type for non-mod browsers)
         Bundle args = getArguments();
         String profileTitle = args != null ? args.getString(ARG_PROFILE_TITLE, "") : "";
-        String loaderLabel = mSearchFilters.modLoader == null || mSearchFilters.modLoader.isEmpty()
-                ? getString(R.string.pedit_modloader_vanilla) : mSearchFilters.modLoader;
-        mContextTextView.setText(getString(R.string.mod_library_context_format, profileTitle, loaderLabel));
+        String secondLabel = "mod".equals(mProjectType)
+                ? (mSearchFilters.modLoader == null || mSearchFilters.modLoader.isEmpty()
+                        ? getString(R.string.pedit_modloader_vanilla) : mSearchFilters.modLoader)
+                : getString(projectTypeLabel(mProjectType));
+        mContextTextView.setText(getString(R.string.mod_library_context_format, profileTitle, secondLabel));
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);

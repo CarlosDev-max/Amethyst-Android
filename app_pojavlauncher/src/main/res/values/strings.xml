@@ -621,4 +621,39 @@
     <string name="local_server_error_no_runtime">No Java %1$d runtime could be prepared. Check your internet connection and try again.</string>
     <string name="local_server_error_launch_failed">The server failed to start. Check the console output above.</string>
 
+    <string name="main_tab_content">Content</string>
+    <string name="main_tab_tools">Tools</string>
+    <string name="main_tab_community">Community</string>
+    <string name="main_tab_servers">Servers</string>
+    <string name="content_mods">Mods</string>
+    <string name="content_shaders">Shaders</string>
+    <string name="content_resourcepacks">Resource packs</string>
+    <string name="content_datapacks">Data packs</string>
+    <string name="content_datapack_choose_title">Install data pack into…</string>
+    <string name="content_datapack_server_prefix">Server: %1$s</string>
+    <string name="content_datapack_no_targets">No worlds or servers found to install this data pack into. Create a world or server first.</string>
+    <string name="main_servers_empty">No servers yet. Create one to run it on this device or share it.</string>
+    <string name="main_servers_create">Create server</string>
+
+    <string name="server_manage_tab_settings">Settings</string>
+    <string name="server_manage_tab_files">Files</string>
+    <string name="server_manage_tab_console">Console</string>
+    <string name="server_manage_motd">MOTD</string>
+    <string name="server_manage_view_distance">View distance</string>
+    <string name="server_manage_rcon_port">RCON port</string>
+    <string name="server_manage_rcon_password">RCON password</string>
+    <string name="server_manage_regen_password">Generate new password</string>
+    <string name="server_manage_whitelist">Whitelist</string>
+    <string name="server_manage_enable_rcon">Enable RCON (console commands)</string>
+    <string name="server_manage_save">Save changes</string>
+    <string name="server_manage_saved">Server settings saved</string>
+    <string name="server_manage_files_header">SERVER FOLDER</string>
+    <string name="server_manage_delete">Delete server</string>
+    <string name="server_manage_delete_title">Delete this server?</string>
+    <string name="server_manage_delete_message">The folder %1$s, including its world and player data, will be permanently deleted.</string>
+    <string name="server_manage_deleted">Server deleted</string>
+    <string name="server_manage_open_console">Open live console</string>
+    <string name="server_manage_console_note">While the server runs, the live console opens in its own process. Below is the end of the last log.</string>
+    <string name="server_manage_no_log">No log yet. Run the server once to see its output here.</string>
+
 </resources>

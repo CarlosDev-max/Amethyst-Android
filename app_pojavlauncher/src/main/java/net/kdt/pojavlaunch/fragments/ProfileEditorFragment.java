@@ -454,6 +454,18 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         if(mTempProfile.javaArgs.isEmpty()) mTempProfile.javaArgs = null;
         if(mTempProfile.gameDir.isEmpty()) mTempProfile.gameDir = null;
 
+        // Give every newly-created profile its own isolated game directory so mods, shaders and
+        // resource packs never mix between instances. Only applies to brand-new profiles (created
+        // through the editor, i.e. getArguments() != null) with no explicit path; modpack/loader
+        // flows set their own gameDir and existing profiles are left untouched.
+        if(mTempProfile.gameDir == null && getArguments() != null) {
+            String rawName = Tools.isValidString(mTempProfile.name) ? mTempProfile.name : mProfileKey;
+            String dirName = net.kdt.pojavlaunch.servers.ServerBundleGenerator.sanitizeName(rawName);
+            if(dirName == null) dirName = mProfileKey;
+            mTempProfile.gameDir = "./instances/" + dirName;
+            Tools.getGameDirPath(mTempProfile).mkdirs();
+        }
+
         Runtime selectedRuntime = (Runtime) mDefaultRuntime.getSelectedItem();
         mTempProfile.javaDir = (selectedRuntime.name.equals("<Default>") || selectedRuntime.versionString == null)
                 ? null : Tools.LAUNCHERPROFILES_RTPREFIX + selectedRuntime.name;

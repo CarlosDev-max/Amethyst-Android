@@ -100,6 +100,14 @@ public interface ModpackApi {
      * @param profileGameDir The profile's .minecraft-style game directory (mods/ is created under it)
      */
     default void downloadModToProfile(Context context, ModDetail modDetail, int selectedVersion, File profileGameDir) {
+        downloadModToFolder(context, modDetail, selectedVersion, new File(profileGameDir, "mods"));
+    }
+
+    /**
+     * Downloads a single file straight into the given folder (created when missing), for
+     * content types that live outside mods/ (shader packs, resource packs, data packs).
+     */
+    default void downloadModToFolder(Context context, ModDetail modDetail, int selectedVersion, File targetDir) {
         ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_waiting);
         PojavApplication.sExecutorService.execute(() -> {
             try {
@@ -107,11 +115,10 @@ public interface ModpackApi {
                 String sha1 = modDetail.versionHashes[selectedVersion];
                 int fileSize = modDetail.versionFileSizes != null ? modDetail.versionFileSizes[selectedVersion] : 0;
                 String fileName = url.substring(url.lastIndexOf('/') + 1);
-                File modsDir = new File(profileGameDir, "mods");
-                if (!modsDir.exists() && !modsDir.mkdirs())
-                    throw new IOException("Could not create mods directory: " + modsDir);
+                if (!targetDir.exists() && !targetDir.mkdirs())
+                    throw new IOException("Could not create directory: " + targetDir);
 
-                ModDownloader downloader = new ModDownloader(modsDir, fileSize <= 0);
+                ModDownloader downloader = new ModDownloader(targetDir, fileSize <= 0);
                 downloader.submitDownload(fileSize, fileName, sha1, url);
                 downloader.awaitFinish(new DownloaderProgressWrapper(
                         R.string.modpack_download_downloading_mods, ProgressLayout.INSTALL_MODPACK));

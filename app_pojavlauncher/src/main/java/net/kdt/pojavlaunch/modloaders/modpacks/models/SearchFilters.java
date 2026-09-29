@@ -12,5 +12,8 @@ public class SearchFilters {
     /** Loader id as used by Modrinth categories: "forge", "fabric", "quilt", "neoforge".
      *  Null or empty means no loader filtering. Ignored when isModpack is true. */
     @Nullable public String modLoader;
+    /** Modrinth project type: "mod", "shader", "resourcepack", "datapack". Overridden to
+     *  "modpack" when isModpack is true. */
+    public String projectType = "mod";
 
 }

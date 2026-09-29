@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@color/background_app">
+
+	<com.google.android.material.tabs.TabLayout
+		android:id="@+id/server_manage_tabs"
+		style="@style/Amethyst.Tabs"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/server_manage_tab_settings" />
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/server_manage_tab_files" />
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/server_manage_tab_console" />
+	</com.google.android.material.tabs.TabLayout>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:clipToPadding="false"
+		android:paddingHorizontal="@dimen/padding_large"
+		android:paddingTop="@dimen/padding_large"
+		android:paddingBottom="@dimen/padding_large">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:id="@+id/server_manage_settings_section"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/Amethyst.TextInput"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/server_manage_motd">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/server_manage_motd_input"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="text"
+						android:maxLines="1" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:baselineAligned="false"
+					android:orientation="horizontal">
+
+					<com.google.android.material.textfield.TextInputLayout
+						style="@style/Amethyst.TextInput"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:hint="@string/local_server_port">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/server_manage_port_input"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:inputType="number"
+							android:maxLines="1" />
+					</com.google.android.material.textfield.TextInputLayout>
+
+					<Space
+						android:layout_width="@dimen/padding_moderate"
+						android:layout_height="match_parent" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						style="@style/Amethyst.TextInput"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:hint="@string/local_server_max_players">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/server_manage_players_input"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:inputType="number"
+							android:maxLines="1" />
+					</com.google.android.material.textfield.TextInputLayout>
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:baselineAligned="false"
+					android:orientation="horizontal">
+
+					<com.google.android.material.textfield.TextInputLayout
+						style="@style/Amethyst.TextInput"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:hint="@string/server_manage_view_distance">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/server_manage_view_distance_input"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:inputType="number"
+							android:maxLines="1" />
+					</com.google.android.material.textfield.TextInputLayout>
+
+					<Space
+						android:layout_width="@dimen/padding_moderate"
+						android:layout_height="match_parent" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						style="@style/Amethyst.TextInput"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:hint="@string/server_manage_rcon_port">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/server_manage_rcon_port_input"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:inputType="number"
+							android:maxLines="1" />
+					</com.google.android.material.textfield.TextInputLayout>
+				</LinearLayout>
+
+				<TextView
+					style="@style/Amethyst.SectionHeader"
+					android:layout_marginTop="@dimen/padding_large"
+					android:text="@string/local_server_section_gameplay" />
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_medium"
+					android:gravity="center_vertical"
+					android:orientation="horizontal">
+
+					<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/local_server_gamemode"
+						android:textColor="@color/secondary_text" />
+
+					<Spinner
+						android:id="@+id/server_manage_gamemode_spinner"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:entries="@array/local_server_gamemodes" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:gravity="center_vertical"
+					android:orientation="horizontal">
+
+					<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/local_server_difficulty"
+						android:textColor="@color/secondary_text" />
+
+					<Spinner
+						android:id="@+id/server_manage_difficulty_spinner"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:entries="@array/local_server_difficulties" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:gravity="center_vertical"
+					android:orientation="horizontal">
+
+					<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/local_server_memory"
+						android:textColor="@color/secondary_text" />
+
+					<Spinner
+						android:id="@+id/server_manage_memory_spinner"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:entries="@array/local_server_memory" />
+				</LinearLayout>
+
+				<com.google.android.material.materialswitch.MaterialSwitch
+					android:id="@+id/server_manage_online_mode_switch"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_large"
+					android:text="@string/local_server_online_mode" />
+
+				<com.google.android.material.materialswitch.MaterialSwitch
+					android:id="@+id/server_manage_whitelist_switch"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:text="@string/server_manage_whitelist" />
+
+				<com.google.android.material.materialswitch.MaterialSwitch
+					android:id="@+id/server_manage_rcon_switch"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:text="@string/server_manage_enable_rcon" />
+
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/Amethyst.TextInput"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:hint="@string/server_manage_rcon_password">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/server_manage_rcon_password_input"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="textVisiblePassword"
+						android:maxLines="1" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<Button
+					android:id="@+id/server_manage_regen_password_button"
+					style="@style/Amethyst.OutlinedButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:text="@string/server_manage_regen_password" />
+
+				<Button
+					android:id="@+id/server_manage_save_button"
+					style="@style/Amethyst.TonalButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_large"
+					android:text="@string/server_manage_save" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/server_manage_files_section"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone">
+
+				<TextView
+					style="@style/Amethyst.SectionHeader"
+					android:text="@string/server_manage_files_header" />
+
+				<Button
+					android:id="@+id/server_manage_open_folder_button"
+					style="@style/Amethyst.TonalButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_medium"
+					android:text="@string/local_server_open_folder" />
+
+				<Button
+					android:id="@+id/server_manage_share_zip_button"
+					style="@style/Amethyst.TonalButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:text="@string/local_server_share_zip" />
+
+				<Button
+					android:id="@+id/server_manage_delete_button"
+					style="@style/Amethyst.OutlinedButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_large"
+					android:text="@string/server_manage_delete" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/server_manage_console_section"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone">
+
+				<Button
+					android:id="@+id/server_manage_open_console_button"
+					style="@style/Amethyst.TonalButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/server_manage_open_console" />
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:text="@string/server_manage_console_note"
+					android:textColor="@color/secondary_text" />
+
+				<TextView
+					android:id="@+id/server_manage_log_tail"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_moderate"
+					android:fontFamily="monospace"
+					android:textIsSelectable="true"
+					android:textSize="12sp" />
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

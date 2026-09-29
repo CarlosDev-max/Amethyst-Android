@@ -15,7 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -53,6 +55,19 @@ public class ServerBundleGenerator {
 
     public static File getBundleDirectory(String sanitizedName) {
         return new File(getServersRoot(), sanitizedName);
+    }
+
+    /** @return every bundle directory under the servers root that contains a server.jar, sorted by name */
+    public static List<File> listBundles() {
+        List<File> bundles = new ArrayList<>();
+        File[] children = getServersRoot().listFiles();
+        if (children != null) {
+            Arrays.sort(children);
+            for (File child : children) {
+                if (child.isDirectory() && new File(child, SERVER_JAR_NAME).isFile()) bundles.add(child);
+            }
+        }
+        return bundles;
     }
 
     /** @return a filesystem-safe folder name, or null if nothing usable was left */
@@ -140,7 +155,7 @@ public class ServerBundleGenerator {
         return properties.toString();
     }
 
-    private static String newRconPassword() {
+    public static String newRconPassword() {
         byte[] bytes = new byte[12];
         new java.security.SecureRandom().nextBytes(bytes);
         StringBuilder password = new StringBuilder();

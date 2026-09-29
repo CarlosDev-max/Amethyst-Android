@@ -7,6 +7,34 @@
 	android:layout_height="match_parent"
 	android:background="@color/background_app">
 
+	<com.google.android.material.tabs.TabLayout
+		android:id="@+id/main_tabs"
+		style="@style/Amethyst.Tabs"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent">
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/main_tab_content" />
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/main_tab_tools" />
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/main_tab_community" />
+
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/main_tab_servers" />
+	</com.google.android.material.tabs.TabLayout>
+
 	<ScrollView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -14,7 +42,7 @@
 		android:paddingHorizontal="@dimen/padding_large"
 		android:paddingTop="@dimen/padding_large"
 		android:paddingBottom="@dimen/padding_large"
-		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/main_tabs"
 		app:layout_constraintBottom_toTopOf="@id/mc_version_spinner">
 
 		<LinearLayout
@@ -22,84 +50,170 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<TextView
-				style="@style/Amethyst.SectionHeader"
-				android:layout_marginStart="@dimen/_4sdp"
-				android:layout_marginBottom="@dimen/_8sdp"
-				android:text="@string/main_menu_section_community" />
-
 			<LinearLayout
+				android:id="@+id/section_content"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:baselineAligned="false">
+				android:orientation="vertical">
 
-				<com.kdt.mcgui.LauncherMenuButton
-					android:id="@+id/news_button"
-					style="@style/LauncherMenuButton.Universal"
-					android:layout_width="0dp"
-					android:layout_weight="1"
-					android:drawableStart="@drawable/ic_menu_article"
-					android:text="@string/mcl_tab_wiki" />
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:baselineAligned="false"
+					android:orientation="horizontal">
 
-				<Space
-					android:layout_width="@dimen/_10sdp"
-					android:layout_height="1dp" />
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/content_mods_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_download"
+						android:text="@string/content_mods" />
 
-				<com.kdt.mcgui.LauncherMenuButton
-					android:id="@+id/discord_button"
-					style="@style/LauncherMenuButton.Universal"
-					android:layout_width="0dp"
-					android:layout_weight="1"
-					android:drawableStart="@drawable/ic_menu_discord"
-					android:text="@string/mcl_button_discord" />
+					<Space
+						android:layout_width="@dimen/_10sdp"
+						android:layout_height="1dp" />
+
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/content_shaders_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_shader"
+						android:text="@string/content_shaders" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/_10sdp"
+					android:baselineAligned="false"
+					android:orientation="horizontal">
+
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/content_resourcepacks_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_resourcepack"
+						android:text="@string/content_resourcepacks" />
+
+					<Space
+						android:layout_width="@dimen/_10sdp"
+						android:layout_height="1dp" />
+
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/content_datapacks_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_datapack"
+						android:text="@string/content_datapacks" />
+				</LinearLayout>
 			</LinearLayout>
 
-			<TextView
-				style="@style/Amethyst.SectionHeader"
-				android:layout_marginStart="@dimen/_4sdp"
-				android:layout_marginTop="@dimen/_22sdp"
-				android:layout_marginBottom="@dimen/_8sdp"
-				android:text="@string/main_menu_section_tools" />
-
-			<com.kdt.mcgui.LauncherMenuButton
-				android:id="@+id/custom_control_button"
-				style="@style/LauncherMenuButton.Universal"
+			<LinearLayout
+				android:id="@+id/section_tools"
 				android:layout_width="match_parent"
-				android:drawableStart="@drawable/ic_menu_gamepad"
-				android:text="@string/mcl_option_customcontrol" />
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone">
 
-			<com.kdt.mcgui.LauncherMenuButton
-				android:id="@+id/install_jar_button"
-				style="@style/LauncherMenuButton.Universal"
-				android:layout_width="match_parent"
-				android:layout_marginTop="@dimen/_10sdp"
-				android:drawableStart="@drawable/ic_menu_download"
-				android:text="@string/main_install_jar_file" />
+				<com.kdt.mcgui.LauncherMenuButton
+					android:id="@+id/custom_control_button"
+					style="@style/LauncherMenuButton.Universal"
+					android:layout_width="match_parent"
+					android:drawableStart="@drawable/ic_menu_gamepad"
+					android:text="@string/mcl_option_customcontrol" />
 
-			<com.kdt.mcgui.LauncherMenuButton
-				android:id="@+id/share_logs_button"
-				style="@style/LauncherMenuButton.Universal"
-				android:layout_width="match_parent"
-				android:layout_marginTop="@dimen/_10sdp"
-				android:drawableStart="@drawable/ic_menu_logs"
-				android:text="@string/main_share_logs" />
+				<com.kdt.mcgui.LauncherMenuButton
+					android:id="@+id/install_jar_button"
+					style="@style/LauncherMenuButton.Universal"
+					android:layout_width="match_parent"
+					android:layout_marginTop="@dimen/_10sdp"
+					android:drawableStart="@drawable/ic_menu_download"
+					android:text="@string/main_install_jar_file" />
 
-			<com.kdt.mcgui.LauncherMenuButton
-				android:id="@+id/open_files_button"
-				style="@style/LauncherMenuButton.Universal"
-				android:layout_width="match_parent"
-				android:layout_marginTop="@dimen/_10sdp"
-				android:drawableStart="@drawable/ic_menu_folder"
-				android:text="@string/mcl_button_open_directory" />
+				<com.kdt.mcgui.LauncherMenuButton
+					android:id="@+id/share_logs_button"
+					style="@style/LauncherMenuButton.Universal"
+					android:layout_width="match_parent"
+					android:layout_marginTop="@dimen/_10sdp"
+					android:drawableStart="@drawable/ic_menu_logs"
+					android:text="@string/main_share_logs" />
 
-			<com.kdt.mcgui.LauncherMenuButton
-				android:id="@+id/local_server_button"
-				style="@style/LauncherMenuButton.Universal"
+				<com.kdt.mcgui.LauncherMenuButton
+					android:id="@+id/open_files_button"
+					style="@style/LauncherMenuButton.Universal"
+					android:layout_width="match_parent"
+					android:layout_marginTop="@dimen/_10sdp"
+					android:drawableStart="@drawable/ic_menu_folder"
+					android:text="@string/mcl_button_open_directory" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/section_community"
 				android:layout_width="match_parent"
-				android:layout_marginTop="@dimen/_10sdp"
-				android:drawableStart="@drawable/ic_menu_local_server"
-				android:text="@string/main_local_server" />
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone">
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:baselineAligned="false"
+					android:orientation="horizontal">
+
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/news_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_article"
+						android:text="@string/mcl_tab_wiki" />
+
+					<Space
+						android:layout_width="@dimen/_10sdp"
+						android:layout_height="1dp" />
+
+					<com.kdt.mcgui.LauncherMenuButton
+						android:id="@+id/discord_button"
+						style="@style/LauncherMenuButton.Universal"
+						android:layout_width="0dp"
+						android:layout_weight="1"
+						android:drawableStart="@drawable/ic_menu_discord"
+						android:text="@string/mcl_button_discord" />
+				</LinearLayout>
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/section_servers"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone">
+
+				<TextView
+					android:id="@+id/server_empty_text"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/main_servers_empty"
+					android:textColor="@color/secondary_text" />
+
+				<LinearLayout
+					android:id="@+id/server_list_container"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical" />
+
+				<Button
+					android:id="@+id/server_create_button"
+					style="@style/Amethyst.TonalButton"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding_large"
+					android:text="@string/main_servers_create" />
+			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 

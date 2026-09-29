@@ -53,10 +53,10 @@ public class ModrinthApi implements ModpackApi{
         HashMap<String, Object> params = new HashMap<>();
         StringBuilder facetString = new StringBuilder();
         facetString.append("[");
-        facetString.append(String.format("[\"project_type:%s\"]", searchFilters.isModpack ? "modpack" : "mod"));
+        facetString.append(String.format("[\"project_type:%s\"]", projectType(searchFilters)));
         if(searchFilters.mcVersion != null && !searchFilters.mcVersion.isEmpty())
             facetString.append(String.format(",[\"versions:%s\"]", searchFilters.mcVersion));
-        if(!searchFilters.isModpack && searchFilters.modLoader != null && !searchFilters.modLoader.isEmpty())
+        if(usesLoaderFacet(searchFilters) && searchFilters.modLoader != null && !searchFilters.modLoader.isEmpty())
             facetString.append(String.format(",[\"categories:%s\"]", searchFilters.modLoader));
         facetString.append("]");
         params.put("facets", facetString.toString());
@@ -90,6 +90,17 @@ public class ModrinthApi implements ModpackApi{
         return modrinthSearchResult;
     }
 
+    /** Modpacks keep their own search flow; everything else browses a single project type. */
+    private static String projectType(SearchFilters searchFilters) {
+        if (searchFilters.isModpack) return "modpack";
+        return searchFilters.projectType == null ? "mod" : searchFilters.projectType;
+    }
+
+    /** Loader categories only exist for mods; shaders and packs would filter everything out. */
+    private static boolean usesLoaderFacet(SearchFilters searchFilters) {
+        return searchFilters.isModpack || "mod".equals(projectType(searchFilters));
+    }
+
     @Override
     public ModDetail getModDetails(ModItem item) {
         return getModDetails(item, null);
@@ -99,7 +110,7 @@ public class ModrinthApi implements ModpackApi{
     public ModDetail getModDetails(ModItem item, SearchFilters searchFilters) {
         fillInMissingModItemData(item);
         HashMap<String, Object> params = new HashMap<>();
-        String loaderFilter = searchFilters == null || searchFilters.isModpack ? null : searchFilters.modLoader;
+        String loaderFilter = searchFilters == null || !usesLoaderFacet(searchFilters) ? null : searchFilters.modLoader;
         String mcVersionFilter = searchFilters == null ? null : searchFilters.mcVersion;
         if (loaderFilter != null && !loaderFilter.isEmpty())
             params.put("loaders", String.format("[\"%s\"]", loaderFilter));
