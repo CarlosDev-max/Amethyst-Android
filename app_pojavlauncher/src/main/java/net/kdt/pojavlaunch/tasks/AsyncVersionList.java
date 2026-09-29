@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /** Class getting the version list, and that's all really */
 public class AsyncVersionList {
@@ -74,9 +75,9 @@ public class AsyncVersionList {
 
             // Then save the version list
             //TODO make it not save at times ?
-            FileOutputStream fos = new FileOutputStream(Tools.DIR_CACHE + "/version_list.json");
-            fos.write(jsonString.getBytes());
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(Tools.DIR_CACHE + "/version_list.json")) {
+                fos.write(jsonString.getBytes(StandardCharsets.UTF_8));
+            }
 
 
 

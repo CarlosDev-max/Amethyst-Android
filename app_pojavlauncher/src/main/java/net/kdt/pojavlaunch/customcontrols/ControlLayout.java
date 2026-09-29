@@ -551,7 +551,7 @@ public class ControlLayout extends FrameLayout {
 			public void onFileSelected(File file, String path) {
 				try {
 					loadLayout(path);
-				}catch (IOException e) {
+				}catch (IOException|JsonSyntaxException e) {
 					Tools.showError(getContext(), e);
 				}
 				dialog.dismiss();

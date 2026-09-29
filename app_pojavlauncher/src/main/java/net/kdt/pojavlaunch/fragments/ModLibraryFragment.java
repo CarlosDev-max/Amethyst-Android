@@ -2,7 +2,6 @@ package net.kdt.pojavlaunch.fragments;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -220,7 +220,7 @@ public class ModLibraryFragment extends Fragment implements ModItemAdapter.Searc
         mStatusTextView.setVisibility(View.VISIBLE);
         switch (error) {
             case ERROR_INTERNAL:
-                mStatusTextView.setTextColor(Color.RED);
+                mStatusTextView.setTextColor(ContextCompat.getColor(mStatusTextView.getContext(), R.color.accent_error));
                 mStatusTextView.setText(R.string.search_modpack_error);
                 break;
             case ERROR_NO_RESULTS:

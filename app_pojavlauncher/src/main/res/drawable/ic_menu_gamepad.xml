@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monochrome gamepad icon, tinted at runtime by LauncherMenuButton -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M7.5,6h9a5.5,5.5 0,0 1,5.5 5.5v2A4.5,4.5 0,0 1,17.5 18h-0.7l-1.9,-2.8H9.1L7.2,18H6.5A4.5,4.5 0,0 1,2 13.5v-2A5.5,5.5 0,0 1,7.5 6zM6.4,10.3H8v1.6h1.6v1.6H8v1.6H6.4v-1.6H4.8v-1.6h1.6zM15.2,10.6a1.1,1.1 0,1 0,0 2.2,1.1 1.1,0 0,0 0,-2.2zM17.6,12.8a1.1,1.1 0,1 0,0 2.2,1.1 1.1,0 0,0 0,-2.2z"/>
+</vector>

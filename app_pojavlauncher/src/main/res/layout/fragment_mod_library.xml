@@ -79,7 +79,7 @@
         android:id="@+id/mod_library_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        tools:text="Status message"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/mod_library_list"
         app:layout_constraintEnd_toEndOf="@+id/mod_library_list"

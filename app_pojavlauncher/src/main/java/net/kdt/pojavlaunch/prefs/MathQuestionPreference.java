@@ -26,25 +26,37 @@ import java.util.Random;
 
 public class MathQuestionPreference extends SwitchPreferenceCompat {
     private AlertDialog mathDialog;
+    private final Application mApplication;
+    private final Application.ActivityLifecycleCallbacks mLifecycleCallbacks =
+            new Application.ActivityLifecycleCallbacks() {
+                @Override
+                public void onActivityPaused(@NonNull Activity activity) {
+                    if (mathDialog != null && mathDialog.isShowing()) {
+                        mathDialog.dismiss();
+                    }
+                }
+
+                // Unused callbacks
+                public void onActivityCreated(@NonNull Activity a, Bundle b) {}
+                public void onActivityStarted(@NonNull Activity a) {}
+                public void onActivityResumed(@NonNull Activity a) {}
+                public void onActivityStopped(@NonNull Activity a) {}
+                public void onActivitySaveInstanceState(@NonNull Activity a, Bundle b) {}
+                public void onActivityDestroyed(@NonNull Activity a) {}
+            };
+
     public MathQuestionPreference(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ((Application) context.getApplicationContext())
-                .registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-                    @Override
-                    public void onActivityPaused(@NonNull Activity activity) {
-                        if (mathDialog != null && mathDialog.isShowing()) {
-                            mathDialog.dismiss();
-                        }
-                    }
+        mApplication = (Application) context.getApplicationContext();
+        mApplication.registerActivityLifecycleCallbacks(mLifecycleCallbacks);
+    }
 
-                    // Unused callbacks
-                    public void onActivityCreated(@NonNull Activity a, Bundle b) {}
-                    public void onActivityStarted(@NonNull Activity a) {}
-                    public void onActivityResumed(@NonNull Activity a) {}
-                    public void onActivityStopped(@NonNull Activity a) {}
-                    public void onActivitySaveInstanceState(@NonNull Activity a, Bundle b) {}
-                    public void onActivityDestroyed(@NonNull Activity a) {}
-                });
+    @Override
+    public void onDetached() {
+        // The Application outlives the settings screen, so an unremoved callback keeps
+        // this preference (and the Activity behind it) alive forever.
+        mApplication.unregisterActivityLifecycleCallbacks(mLifecycleCallbacks);
+        super.onDetached();
     }
 
     // mapping hardcoded to english. we want people who can actually understand the message

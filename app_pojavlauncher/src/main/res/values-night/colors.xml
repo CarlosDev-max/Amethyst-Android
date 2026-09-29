@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Amethyst design tokens — DARK scheme.
+        Surfaces carry a faint violet tint so the dark theme reads as "amethyst"
+        rather than as flat neutral grey. In-game overlay colors are intentionally
+        absent here so they stay identical to values/colors.xml.
+    -->
+
+    <!-- Surfaces -->
+    <color name="background_app">#141019</color>
+    <color name="background_status_bar">#1E1826</color>
+    <color name="background_bottom_bar">#1A1421</color>
+    <color name="background_card">#211A2B</color>
+    <color name="background_card_elevated">#291F35</color>
+    <color name="background_overlay">#3B3247</color>
+    <color name="divider">#332A40</color>
+    <color name="field_background">#17121F</color>
+    <color name="menu_icon_tint">@color/amethyst_200</color>
+
+    <!-- Text -->
+    <color name="primary_text">#F4EFF9</color>
+    <color name="secondary_text">#B9AEC8</color>
+    <color name="text_tertiary">#8B8199</color>
+
+    <!-- Accent -->
+    <color name="minebutton_color">#A855C7</color>
+    <color name="accent_success">#6FD39A</color>
+    <color name="accent_warning">#F2B45C</color>
+    <color name="accent_error">#F2857C</color>
+
+    <!-- Material 3 color roles (dark) -->
+    <color name="m3_primary">#D7B4F0</color>
+    <color name="m3_on_primary">#45105E</color>
+    <color name="m3_primary_container">#5C1F79</color>
+    <color name="m3_on_primary_container">#F2E3FF</color>
+    <color name="m3_secondary">#CDBBDD</color>
+    <color name="m3_on_secondary">#352A42</color>
+    <color name="m3_secondary_container">#4A3D59</color>
+    <color name="m3_on_secondary_container">#E9DEF8</color>
+    <color name="m3_surface">#141019</color>
+    <color name="m3_on_surface">#E7E0EC</color>
+    <color name="m3_surface_variant">#49405A</color>
+    <color name="m3_on_surface_variant">#CAC0D6</color>
+    <color name="m3_outline">#948AA3</color>
+    <color name="m3_outline_variant">#332A40</color>
+    <color name="m3_error">#F2857C</color>
+    <color name="m3_on_error">#601410</color>
+</resources>

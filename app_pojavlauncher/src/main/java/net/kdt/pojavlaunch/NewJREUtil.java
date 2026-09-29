@@ -112,7 +112,7 @@ public class NewJREUtil {
 
         // Check if the selected runtime actually exists in the APK, else download it
         // If it isn't InternalRuntime then it wasn't in the apk in the first place!
-        if (selectedRankedRuntime.value instanceof InternalRuntime)
+        if (selectedRankedRuntime != null && selectedRankedRuntime.value instanceof InternalRuntime) {
             if (!checkInternalRuntime(assetManager, (InternalRuntime) selectedRankedRuntime.value)) {
                 if (nearestInstalledRuntime == null) // If this was non-null then it would be a valid runtime and we can leave it be
                     tryDownloadRuntime(activity, gameRequiredVersion);
@@ -120,9 +120,11 @@ public class NewJREUtil {
                 // This also refreshes it so after the runtime download, it can find the new runtime
                 selectedRankedRuntime = getNearestInstalledRuntime(gameRequiredVersion);
             }
+        }
 
 
-        // No possible selections
+        // No possible selections, either because none matched to begin with or because the
+        // internal runtime was unusable and no installed runtime replaced it.
         if(selectedRankedRuntime == null) {
             showRuntimeFail(activity, versionInfo);
             return false;

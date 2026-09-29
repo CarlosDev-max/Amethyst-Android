@@ -10,6 +10,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SeekBarPreference;
 
@@ -61,7 +62,7 @@ public class CustomSeekBarPreference extends SeekBarPreference {
     public void onBindViewHolder(@NonNull PreferenceViewHolder view) {
         super.onBindViewHolder(view);
         TextView titleTextView = (TextView) view.findViewById(android.R.id.title);
-        titleTextView.setTextColor(Color.WHITE);
+        titleTextView.setTextColor(ContextCompat.getColor(view.itemView.getContext(), R.color.primary_text));
 
         mTextView = (TextView) view.findViewById(R.id.seekbar_value);
         mTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);

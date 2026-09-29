@@ -128,6 +128,14 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
 
+        <activity
+            android:name=".servers.ServerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:process=":server"
+            android:windowSoftInputMode="adjustResize" />
+
         <provider
             android:name=".scoped.FolderProvider"
             android:authorities="@string/storageProviderAuthorities"
@@ -145,6 +153,11 @@
             android:foregroundServiceType="specialUse">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="This application is intended to run a 3rd-party piece of software which cannot be managed using the activity's saved instance state. This service is used for background persistence of this piece of software."/>
+        </service>
+        <service android:name=".services.ServerService" android:process=":server"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps a user-started Minecraft dedicated server JVM alive in-process while the launcher UI is backgrounded."/>
         </service>
     </application>
     <queries>

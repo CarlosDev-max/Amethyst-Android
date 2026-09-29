@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.Architecture;
@@ -166,7 +167,7 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
                 mFullJavaVersionTextView.setText(mContext.getString(R.string.multirt_runtime_incompatiblearch, runtime.arch));
             }
             mJavaVersionTextView.setText(runtime.name);
-            mFullJavaVersionTextView.setTextColor(Color.RED);
+            mFullJavaVersionTextView.setTextColor(ContextCompat.getColor(mContext, R.color.accent_error));
             mSetDefaultButton.setVisibility(View.GONE);
         }
 
@@ -192,9 +193,8 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
             mSetDefaultButton.setOnClickListener(v -> {
                 runtime.isDownloading = true;
                 mSetDefaultButton.setEnabled(false);
-                mSetDefaultButton.setText(R.string.global_download);
+                mSetDefaultButton.setText(R.string.global_installing);
                 sExecutorService.execute(() -> {
-                    mSetDefaultButton.setText(R.string.global_installing);
                     try {
                         runtime.downloadRuntime(v.getContext());
                     } catch (RuntimeException e) {

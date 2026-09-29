@@ -1,15 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
+        Amethyst design tokens — LIGHT scheme.
+        The dark counterparts live in values-night/colors.xml. Keep the two files
+        in sync: every name declared there must exist here too.
+
+        In-game overlay colors are deliberately NOT overridden per scheme, because
+        they sit on top of a rendered 3D scene where a light variant would be unreadable.
+    -->
+
+    <!-- In-game control overlay (constant across schemes on purpose) -->
     <color name="control_button_color">#4CC4C4C4</color>
     <color name="control_button_pressed_color">#4D000000</color>
 
-    <color name="minebutton_color">#9649b8</color>
-    <color name="background_app">#181818</color>
-    <color name="divider">@color/background_overlay</color>
-    <color name="background_overlay">#464646</color>
-    <color name="background_status_bar">#242424</color>
-    <color name="background_bottom_bar">#232323</color>
+    <!-- Brand ramp -->
+    <color name="amethyst_50">#FAF3FF</color>
+    <color name="amethyst_100">#F2E3FF</color>
+    <color name="amethyst_200">#E4C9FB</color>
+    <color name="amethyst_300">#CFA3F0</color>
+    <color name="amethyst_400">#B678DF</color>
+    <color name="amethyst_500">#9649B8</color>
+    <color name="amethyst_600">#7E35A0</color>
+    <color name="amethyst_700">#652882</color>
+    <color name="amethyst_800">#4A1C61</color>
+    <color name="amethyst_900">#2E1140</color>
 
-    <color name="primary_text">#FFFFFF</color>
-    <color name="secondary_text">#B2B2B2</color>
+    <!-- Surfaces -->
+    <color name="background_app">#F6F2FB</color>
+    <color name="background_status_bar">#E7DDF3</color>
+    <color name="background_bottom_bar">#EDE5F7</color>
+    <color name="background_card">#FFFFFF</color>
+    <color name="background_card_elevated">#FBF8FE</color>
+    <color name="background_overlay">#CFC3DE</color>
+    <color name="divider">#DED3EA</color>
+    <color name="field_background">#F1EBF8</color>
+    <color name="menu_icon_tint">@color/amethyst_700</color>
+
+    <!--
+        The log viewer is a terminal-style overlay drawn on top of the running game,
+        so it stays dark in both schemes (values-night does not override these).
+    -->
+    <color name="logger_toolbar">#2A2433</color>
+    <color name="logger_background">#0D0B11</color>
+    <color name="logger_text">#EDE7F6</color>
+
+    <!-- Text -->
+    <color name="primary_text">#1D1526</color>
+    <color name="secondary_text">#5B5170</color>
+    <color name="text_tertiary">#867C97</color>
+
+    <!-- Accent -->
+    <color name="minebutton_color">#8B3FB0</color>
+    <color name="accent_success">#2E7D4F</color>
+    <color name="accent_warning">#A8600A</color>
+    <color name="accent_error">#B3261E</color>
+
+    <!-- Material 3 color roles (light) -->
+    <color name="m3_primary">#7E35A0</color>
+    <color name="m3_on_primary">#FFFFFF</color>
+    <color name="m3_primary_container">#F2E3FF</color>
+    <color name="m3_on_primary_container">#2E1140</color>
+    <color name="m3_secondary">#6A5A7E</color>
+    <color name="m3_on_secondary">#FFFFFF</color>
+    <color name="m3_secondary_container">#E9DEF8</color>
+    <color name="m3_on_secondary_container">#1D1526</color>
+    <color name="m3_surface">#FBF8FE</color>
+    <color name="m3_on_surface">#1D1526</color>
+    <color name="m3_surface_variant">#E9E0F3</color>
+    <color name="m3_on_surface_variant">#4B4356</color>
+    <color name="m3_outline">#7C7289</color>
+    <color name="m3_outline_variant">#DED3EA</color>
+    <color name="m3_error">#B3261E</color>
+    <color name="m3_on_error">#FFFFFF</color>
 </resources>

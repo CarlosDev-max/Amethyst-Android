@@ -308,6 +308,10 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         return (ModloaderListenerProxy) ExtraCore.getValue(mExtraTag);
     }
     private void setListenerProxy(ModloaderListenerProxy listenerProxy) {
-        ExtraCore.setValue(mExtraTag, listenerProxy);
+        // ExtraCore.setValue ignores nulls, so clearing has to go through removeValue;
+        // leaving a finished proxy behind makes attachListener replay the terminal result
+        // and immediately close this screen the next time it is opened.
+        if (listenerProxy == null) ExtraCore.removeValue(mExtraTag);
+        else ExtraCore.setValue(mExtraTag, listenerProxy);
     }
 }

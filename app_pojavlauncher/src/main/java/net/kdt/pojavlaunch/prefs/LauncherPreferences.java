@@ -18,6 +18,8 @@ import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.JREUtils;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -36,6 +38,7 @@ public class LauncherPreferences {
 	public static String PREF_DEFAULTCTRL_PATH = Tools.CTRLDEF_FILE;
 	public static String PREF_CUSTOM_JAVA_ARGS;
     public static boolean PREF_FORCE_ENGLISH = false;
+    public static String PREF_THEME_MODE = "system";
     public static final String PREF_VERSION_REPOS = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
     public static boolean PREF_CHECK_LIBRARY_SHA = true;
     public static boolean PREF_DISABLE_GESTURES = false;
@@ -87,6 +90,8 @@ public class LauncherPreferences {
         PREF_IGNORE_NOTCH = DEFAULT_PREF.getBoolean("ignoreNotch", false);
 		PREF_LONGPRESS_TRIGGER = DEFAULT_PREF.getInt("timeLongPressTrigger", 300);
         PREF_FORCE_ENGLISH = DEFAULT_PREF.getBoolean("force_english", false);
+        PREF_THEME_MODE = DEFAULT_PREF.getString("themeMode", "system");
+        applyThemeMode();
         PREF_CHECK_LIBRARY_SHA = DEFAULT_PREF.getBoolean("checkLibraries",true);
         PREF_DISABLE_GESTURES = DEFAULT_PREF.getBoolean("disableGestures",false);
         PREF_GAMEPAD_FORCEDSDL_PASSTHRU = DEFAULT_PREF.getBoolean("gamepadPassthruForced",false);
@@ -141,6 +146,25 @@ public class LauncherPreferences {
             PREF_DEFAULT_RUNTIME = MultiRTUtils.getInstalledRuntimes().get(0).name;
             LauncherPreferences.DEFAULT_PREF.edit().putString("defaultRuntime",LauncherPreferences.PREF_DEFAULT_RUNTIME).apply();
         }
+    }
+
+    /// Applies the user-selected light/dark mode. Called from loadPreferences so it runs
+    /// both at process start and whenever the preference changes; setDefaultNightMode is
+    /// a no-op when the mode is unchanged, so this is safe to call repeatedly.
+    private static void applyThemeMode() {
+        int mode;
+        switch (PREF_THEME_MODE) {
+            case "light":
+                mode = AppCompatDelegate.MODE_NIGHT_NO;
+                break;
+            case "dark":
+                mode = AppCompatDelegate.MODE_NIGHT_YES;
+                break;
+            default:
+                mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+                break;
+        }
+        AppCompatDelegate.setDefaultNightMode(mode);
     }
 
     /**

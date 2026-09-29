@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Card-shaped touch feedback for launcher menu rows. The ripple is masked by the
+    rounded solid item, so the highlight clips to the corners instead of bleeding
+    into a square like ?selectableItemBackground would.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/_14sdp" />
+            <solid android:color="@color/background_card" />
+            <stroke
+                android:width="@dimen/_1sdp"
+                android:color="@color/divider" />
+        </shape>
+    </item>
+</ripple>

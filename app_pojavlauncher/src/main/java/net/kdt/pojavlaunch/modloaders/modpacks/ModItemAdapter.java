@@ -375,7 +375,8 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }else if(finalModItems.length == 0) {
                     if(mPreviousResult != null) {
                         mLastPage = true;
-                        notifyItemChanged(mModItems.length);
+                        // mLastPage drops the trailing loading row, so it must be announced as a removal.
+                        notifyItemRemoved(mModItems.length);
                         mSearchResultCallback.onSearchFinished();
                         return;
                     }
@@ -392,8 +393,9 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if(mPreviousResult != null) {
                     int prevLength = mModItems.length;
                     mModItems = finalModItems;
-                    notifyItemChanged(prevLength);
-                    notifyItemRangeInserted(prevLength+1, mModItems.length);
+                    // Second argument is a count of inserted items, not a new total; the
+                    // insert also shifts the loading row to the end on its own.
+                    notifyItemRangeInserted(prevLength, mModItems.length - prevLength);
                 }else {
                     mModItems = finalModItems;
                     notifyDataSetChanged();

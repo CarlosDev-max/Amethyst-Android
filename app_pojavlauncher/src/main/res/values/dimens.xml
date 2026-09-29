@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_handle_min_size">40dp</dimen>
+
+    <!-- Base text size for the whole app; overridden in values-land -->
+    <dimen name="app_default_text_size">@dimen/_12ssp</dimen>
     
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>

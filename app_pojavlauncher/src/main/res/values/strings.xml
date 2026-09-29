@@ -158,6 +158,11 @@
     <string name="main_share_logs">Share log file</string>
     <string name="main_install_jar_file">Execute a .jar</string>
     <string name="main_play">Play</string>
+    <string name="main_menu_section_community">Community</string>
+    <string name="main_menu_section_tools">Tools</string>
+    <string name="main_menu_edit_profile">Edit profile</string>
+    <string name="main_menu_open_settings">Settings</string>
+    <string name="main_local_server">Local server</string>
     <string name="autoram_info_msg">Memory set to %d MB</string>
     <string name="mcl_setting_check_libraries">Check libraries after downloading</string>
     <string name="mcl_setting_check_libraries_subtitle">This option forces the launcher to check the library hash if it\'s available. Prevents broken downloads.</string>
@@ -217,6 +222,11 @@
     <string name="preference_force_vsync_description">Limit thermal throttling by limiting peak performance.</string>
     <string name="preference_force_english_title">Force language to English</string>
     <string name="preference_force_english_description">Allows you to see original strings, as intended by developers. Requires a restart.</string>
+    <string name="preference_theme_title">Appearance</string>
+    <string name="preference_theme_description">Use a light theme, a dark theme, or follow the system setting</string>
+    <string name="theme_mode_system">Follow system</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
     <string name="preference_edit_controls_title">Edit custom controls</string>
     <string name="preference_edit_controls_summary">Tweak the control scheme to fit your needs.</string>
 
@@ -406,6 +416,7 @@
     <string name="log_view_button_output_off">Output\nOFF</string>
     <string name="log_view_button_output_on">Output\nON</string>
     <string name="log_view_label_log_output">Log output:</string>
+    <string name="log_view_button_close">Close log viewer</string>
     <string name="execute_jar_failed_to_read_file">Failed to read the .jar file</string>
     <string name="controller_button_a">A</string>
     <string name="controller_button_b">B</string>
@@ -543,5 +554,71 @@
 
     <string name="external_jar_confirm_title">Open external file?</string>
     <string name="external_jar_confirm_message">This file (JAR) was received from another app. Running it will execute code with the permissions of this app. Continue?</string>
+
+    <!-- Extracted from layouts, which previously hardcoded them -->
+    <string name="login_microsoft">Microsoft Account</string>
+    <string name="login_offline_mode_button">⚠️ Offline Mode (No Account)</string>
+    <string name="login_offline_mode_banner">⚠️ OFFLINE MODE</string>
+    <string name="import_control_file_name">File name:</string>
+    <string name="javagui_button_keyboard">Keyboard</string>
+    <string name="javagui_button_copy">Copy</string>
+    <string name="javagui_button_paste">Paste</string>
+    <string name="modpack_browse">Browse Modpacks</string>
+    <string name="modpack_import_archive">Import Zip or mrpack</string>
+    <string name="profiles_custom_path">Custom path</string>
+
+    <!-- Local server bundle creator -->
+    <string name="local_server_info_title">What this creates</string>
+    <string name="local_server_info_body">Amethyst downloads the official server.jar and writes the configuration (eula.txt, server.properties, start scripts) into a folder of its own. You can then run the server right on this device — console output, commands and all — or share the folder to run it on a PC, Raspberry Pi or VPS instead.</string>
+    <string name="local_server_section_server">Server</string>
+    <string name="local_server_section_gameplay">Gameplay</string>
+    <string name="local_server_section_runtime">Runtime</string>
+    <string name="local_server_pick_version">Select Minecraft version</string>
+    <string name="local_server_version_picked">Version: %s</string>
+    <string name="local_server_name">Server name</string>
+    <string name="local_server_port">Port</string>
+    <string name="local_server_max_players">Max players</string>
+    <string name="local_server_default_port">25565</string>
+    <string name="local_server_default_players">20</string>
+    <string name="local_server_gamemode">Game mode</string>
+    <string name="local_server_difficulty">Difficulty</string>
+    <string name="local_server_online_mode">Online mode (paid accounts only)</string>
+    <string name="local_server_memory">Memory</string>
+    <string name="local_server_create">Create server bundle</string>
+    <string name="local_server_dl_progress">Downloading server (%.2f/%.2f MB)</string>
+    <string name="local_server_fetching_metadata">Looking up the server for %s</string>
+    <string name="local_server_error_bad_number">The port must be between 1 and 65535, and max players between 1 and 1000.</string>
+    <string name="local_server_zipping">Packing %s</string>
+    <string name="local_server_done_title">Server bundle ready</string>
+    <string name="local_server_done_message">Created %1$s.\n\nYou can run it on this device now, or use the folder on a computer with start.sh / start.bat. Players connect to port %2$s of whichever machine runs it.</string>
+    <string name="local_server_run_on_device">Run on this device</string>
+    <string name="local_server_run_existing">Run existing server</string>
+    <string name="local_server_no_bundles">No server folders found yet. Create one first.</string>
+    <string name="local_server_open_folder">Open folder</string>
+    <string name="local_server_share_zip">Share as .zip</string>
+    <string name="local_server_error_no_version">Select a Minecraft version first.</string>
+    <string name="local_server_error_bad_name">Enter a server name using letters, numbers, dots, dashes or underscores.</string>
+    <string name="local_server_error_no_server_jar">Minecraft %s does not provide a server download.</string>
+    <string name="local_server_error_no_release_table">The version list is still loading. Try again in a moment.</string>
+    <string name="local_server_overwrite_title">Replace existing bundle?</string>
+    <string name="local_server_overwrite_message">%s already exists. Its configuration files will be overwritten; the world folder is left untouched.</string>
+    <string name="local_server_notification_title">Server "%s" is running</string>
+    <string name="local_server_notification_body">Tap to open the console</string>
+    <string name="local_server_stop">Stop</string>
+    <string name="local_server_force_stop">Force stop</string>
+    <string name="local_server_close">Close</string>
+    <string name="local_server_stop_title">Stop the server?</string>
+    <string name="local_server_stop_message">Players will be disconnected and the world is saved. Force stop kills the server immediately and may corrupt recently changed chunks.</string>
+    <string name="local_server_command_hint">Server command, e.g. say Hello</string>
+    <string name="local_server_send">Send</string>
+    <string name="local_server_status_starting">Starting %1$s — connect on port %2$s</string>
+    <string name="local_server_status_stopping">Stopping…</string>
+    <string name="local_server_status_stopped">Stopped (exit code %d)</string>
+    <string name="local_server_back_background">The server keeps running in the background</string>
+    <string name="local_server_error_missing_bundle">This server folder no longer contains a server.jar.</string>
+    <string name="local_server_error_not_running">The server is not running</string>
+    <string name="local_server_error_rcon">Could not reach the server console. Bundles created before this update need their server.properties regenerated with RCON enabled.</string>
+    <string name="local_server_error_no_runtime">No Java %1$d runtime could be prepared. Check your internet connection and try again.</string>
+    <string name="local_server_error_launch_failed">The server failed to start. Check the console output above.</string>
 
 </resources>

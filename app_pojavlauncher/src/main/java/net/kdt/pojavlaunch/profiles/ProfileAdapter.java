@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
 import net.kdt.pojavlaunch.R;
@@ -114,8 +115,14 @@ public class ProfileAdapter extends BaseAdapter {
         // Set selected background if needed
         if(displaySelection){
             String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
-            extendedTextView.setBackgroundColor(selectedProfile.equals(nm) ? ColorUtils.setAlphaComponent(Color.WHITE,60) : Color.TRANSPARENT);
+            extendedTextView.setBackgroundColor(selectedProfile.equals(nm) ? getSelectionHighlightColor(v) : Color.TRANSPARENT);
         }else extendedTextView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    /// Translucent primary color so the highlight stays visible in both light and dark schemes.
+    private static int getSelectionHighlightColor(View v) {
+        return ColorUtils.setAlphaComponent(
+                ContextCompat.getColor(v.getContext(), R.color.m3_primary), 48);
     }
 
     public void setViewExtra(View v, ProfileAdapterExtra extra) {

@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 
@@ -107,7 +107,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
     };
 
     private final ErrorListener mErrorListener = errorMessage -> {
-        mLoginBarPaint.setColor(Color.RED);
+        mLoginBarPaint.setColor(ContextCompat.getColor(getContext(), R.color.accent_error));
         Context context = getContext();
         if(errorMessage instanceof PresentedException) {
             PresentedException exception = (PresentedException) errorMessage;

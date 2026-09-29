@@ -24,31 +24,33 @@ public class DownloadUtils {
     }
 
     public static void download(URL url, OutputStream os) throws IOException {
-        InputStream is = null;
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         try {
             // System.out.println("Connecting: " + url.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("User-Agent", USER_AGENT);
             conn.setConnectTimeout(TIME_OUT);
             conn.setReadTimeout(TIME_OUT);
             conn.setDoInput(true);
             conn.connect();
-            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Server returned HTTP " + conn.getResponseCode()
+            int responseCode = conn.getResponseCode();
+            // A 404 is reported as a FileNotFoundException so that DownloadMirror can
+            // recognise a file missing from the mirror and retry against Mojang.
+            if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new FileNotFoundException("Server returned HTTP 404: " + url);
+            }
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Server returned HTTP " + responseCode
                         + ": " + conn.getResponseMessage());
             }
-            is = conn.getInputStream();
-            IOUtils.copy(is, os);
+            try (InputStream is = conn.getInputStream()) {
+                IOUtils.copy(is, os);
+            }
+        } catch (FileNotFoundException e) {
+            throw e;
         } catch (IOException e) {
             throw new IOException("Unable to download from " + url, e);
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    Logger.appendToLog(e);
-                }
-            }
+            conn.disconnect();
         }
     }
 
@@ -67,8 +69,8 @@ public class DownloadUtils {
             if (out.length() < 1) { // Only delete it if file is 0 bytes cause this file might already be downloaded and something else went wrong.
                 Log.i("DownloadUtils", "Cleaning up failed download: " + out.getAbsolutePath());
                 out.delete();
-                throw e;
             }
+            throw e;
         }
     }
 
@@ -79,8 +81,8 @@ public class DownloadUtils {
         HttpURLConnection conn = (HttpURLConnection) new URL(urlInput).openConnection();
         conn.setConnectTimeout(TIME_OUT);
         conn.setReadTimeout(TIME_OUT);
-        InputStream readStr = conn.getInputStream();
-        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+        try (InputStream readStr = conn.getInputStream();
+             FileOutputStream fos = new FileOutputStream(outputFile)) {
             int current;
             int overall = 0;
             int length = conn.getContentLength();
@@ -92,9 +94,12 @@ public class DownloadUtils {
                 fos.write(buffer, 0, current);
                 monitor.updateProgress(overall, length);
             }
-            conn.disconnect();
+        } catch (FileNotFoundException e) {
+            throw e;
         } catch (IOException e) {
             throw new IOException("Unable to download from " + urlInput, e);
+        } finally {
+            conn.disconnect();
         }
     }
 
@@ -176,13 +181,17 @@ public class DownloadUtils {
      */
     public static long getContentLength(String url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.setRequestMethod("HEAD");
-        urlConnection.setDoInput(false);
-        urlConnection.setDoOutput(false);
-        urlConnection.connect();
-        int responseCode = urlConnection.getResponseCode();
-        if(responseCode >= 200 && responseCode <= 299) return urlConnection.getContentLength();
-        return -1;
+        try {
+            urlConnection.setRequestMethod("HEAD");
+            urlConnection.setDoInput(false);
+            urlConnection.setDoOutput(false);
+            urlConnection.connect();
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode >= 200 && responseCode <= 299) return urlConnection.getContentLength();
+            return -1;
+        } finally {
+            urlConnection.disconnect();
+        }
     }
 
     public interface ParseCallback<T> {

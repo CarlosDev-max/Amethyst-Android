@@ -49,7 +49,7 @@ public class LocalLoginFragment extends Fragment {
                     .setPositiveButton(R.string.offline_mode_confirm, (dialog, which) -> {
                         ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{
                                 mUsernameEditText.getText().toString(), "" });
-                        Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+                        Tools.backToMainMenu(requireActivity());
                     })
                     .setNegativeButton(R.string.offline_mode_cancel, null)
                     .show();

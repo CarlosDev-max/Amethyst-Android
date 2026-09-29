@@ -51,6 +51,16 @@
         <item>default</item>
         <item>bmclapi</item>
     </string-array>
+    <string-array name="theme_mode_names">
+        <item>@string/theme_mode_system</item>
+        <item>@string/theme_mode_light</item>
+        <item>@string/theme_mode_dark</item>
+    </string-array>
+    <string-array name="theme_mode_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
     <!--TODO: Make this translatable-->
     <string-array name="mg_renderer_names_angle">
         <item>Disable if possible</item>
@@ -105,5 +115,44 @@
         <item>3</item>
         <item>2</item>
         <item>1</item>
+    </string-array>
+
+    <string-array name="local_server_gamemodes">
+        <item>Survival</item>
+        <item>Creative</item>
+        <item>Adventure</item>
+        <item>Spectator</item>
+    </string-array>
+    <string-array name="local_server_gamemode_values">
+        <item>survival</item>
+        <item>creative</item>
+        <item>adventure</item>
+        <item>spectator</item>
+    </string-array>
+
+    <string-array name="local_server_difficulties">
+        <item>Peaceful</item>
+        <item>Easy</item>
+        <item>Normal</item>
+        <item>Hard</item>
+    </string-array>
+    <string-array name="local_server_difficulty_values">
+        <item>peaceful</item>
+        <item>easy</item>
+        <item>normal</item>
+        <item>hard</item>
+    </string-array>
+
+    <string-array name="local_server_memory">
+        <item>1 GB</item>
+        <item>2 GB</item>
+        <item>4 GB</item>
+        <item>8 GB</item>
+    </string-array>
+    <string-array name="local_server_memory_values">
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
     </string-array>
 </resources>

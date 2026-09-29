@@ -20,13 +20,15 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MCOptionUtils {
-    private static final HashMap<String,String> sParameterMap = new HashMap<>();
-    private static final ArrayList<WeakReference<MCOptionListener>> sOptionListeners = new ArrayList<>();
+    private static final ConcurrentHashMap<String,String> sParameterMap = new ConcurrentHashMap<>();
+    private static final CopyOnWriteArrayList<WeakReference<MCOptionListener>> sOptionListeners = new CopyOnWriteArrayList<>();
     private static FileObserver sFileObserver;
     private static String sOptionFolderPath = null;
     public interface MCOptionListener {
@@ -101,10 +103,10 @@ public class MCOptionUtils {
 
     public static void save() {
         StringBuilder result = new StringBuilder();
-        for(String key : sParameterMap.keySet())
-            result.append(key)
+        for(Map.Entry<String,String> entry : sParameterMap.entrySet())
+            result.append(entry.getKey())
                     .append(':')
-                    .append(sParameterMap.get(key))
+                    .append(entry.getValue())
                     .append('\n');
 
         try {
@@ -136,21 +138,28 @@ public class MCOptionUtils {
             sFileObserver = new FileObserver(new File(sOptionFolderPath + "/options.txt"), FileObserver.MODIFY) {
                 @Override
                 public void onEvent(int i, @Nullable String s) {
-                    MCOptionUtils.load();
-                    notifyListeners();
+                    reloadOnMainThread();
                 }
             };
         }else{
             sFileObserver = new FileObserver(sOptionFolderPath + "/options.txt", FileObserver.MODIFY) {
                 @Override
                 public void onEvent(int i, @Nullable String s) {
-                    MCOptionUtils.load();
-                    notifyListeners();
+                    reloadOnMainThread();
                 }
             };
         }
 
         sFileObserver.startWatching();
+    }
+
+    /// onEvent fires on the observer's own thread; reloading there would clear the map
+    /// underneath the GL and UI threads that read and write it concurrently.
+    private static void reloadOnMainThread() {
+        Tools.runOnUiThread(() -> {
+            MCOptionUtils.load();
+            notifyListeners();
+        });
     }
 
     /** Notify the option listeners */

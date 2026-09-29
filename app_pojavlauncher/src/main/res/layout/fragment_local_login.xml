@@ -32,8 +32,8 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="⚠️ OFFLINE MODE"
-        android:textColor="#FF9800"
+        android:text="@string/login_offline_mode_banner"
+        android:textColor="@color/accent_warning"
         android:textStyle="bold"
         android:textSize="@dimen/_12ssp"
         android:gravity="center"

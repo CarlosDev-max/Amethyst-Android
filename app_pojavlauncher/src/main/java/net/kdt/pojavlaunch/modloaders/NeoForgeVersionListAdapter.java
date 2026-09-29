@@ -24,11 +24,19 @@ public class NeoForgeVersionListAdapter extends BaseExpandableListAdapter implem
         mNeoForgeVersions = new ArrayList<>();
         for(String version : neoforgeVersions) {
             String[] parts = version.split("\\.");
+            if (parts.length < 2) continue;
             String gameVersion;
             try {
-                if (Integer.parseInt(parts[1]) < 25) { // Actual logic for normal mcvers
+                int major = Integer.parseInt(parts[0]);
+                Integer.parseInt(parts[1]); // only to detect april fools ids
+                // NeoForge mirrors the Minecraft version it targets. Up to 1.21.x that
+                // meant prefixing a "1." (21.5.10 -> 1.21.5); Minecraft switched to
+                // date-based numbering afterwards, so 26.3.0.34 maps to 26.3 as-is.
+                if (major >= 22) {
+                    gameVersion = parts[0] + "." + parts[1];
+                } else {
                     gameVersion = "1." + parts[0] + "." + parts[1];
-                } else gameVersion = parts[0] + "." + parts[1];
+                }
             } catch (NumberFormatException ignored) {
                 // Handling for april fools version
                 gameVersion = parts[0] + "." + parts[1];

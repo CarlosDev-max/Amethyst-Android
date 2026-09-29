@@ -164,11 +164,11 @@ public class EditControlSideDialog extends SideDialogView {
         mHeightEditText.setText(String.valueOf(data.getHeight()));
 
         mAlphaSeekbar.setProgress((int) (data.opacity * 100));
-        mStrokeWidthSeekbar.setProgress((int) data.strokeWidth * 10);
+        mStrokeWidthSeekbar.setProgress((int) (data.strokeWidth * 10));
         mCornerRadiusSeekbar.setProgress((int) data.cornerRadius);
 
         setPercentageText(mAlphaPercentTextView, (int) (data.opacity * 100));
-        setPercentageText(mStrokePercentTextView, (int) data.strokeWidth * 10);
+        setPercentageText(mStrokePercentTextView, (int) (data.strokeWidth * 10));
         setPercentageText(mCornerRadiusPercentTextView, (int) data.cornerRadius);
 
         mToggleSwitch.setChecked(data.isToggle);

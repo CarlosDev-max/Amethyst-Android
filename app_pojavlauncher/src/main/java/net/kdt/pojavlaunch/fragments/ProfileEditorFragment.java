@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -73,19 +71,25 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         super(R.layout.fragment_profile_editor);
     }
 
-    @Nullable
+    private static final String STATE_PROFILE_KEY = "profile_key";
+    private static final String STATE_VALUE_TO_CONSUME = "value_to_consume";
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Paths, which can be changed
-        String value = (String) ExtraCore.consumeValue(ExtraConstants.FILE_SELECTOR);
-        if(value != null){
-            if(mValueToConsume.equals(FileSelectorFragment.BUNDLE_SELECT_FOLDER)){
-                mTempProfile.gameDir = value;
-            }else{
-                mTempProfile.controlFile = value;
-            }
-        }
-        return super.onCreateView(inflater, container, savedInstanceState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Both are needed to route a file-selector result correctly after a recreation
+        // (rotation or process death), which is exactly when the result comes back.
+        outState.putString(STATE_PROFILE_KEY, mProfileKey);
+        outState.putString(STATE_VALUE_TO_CONSUME, mValueToConsume);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) return;
+        mProfileKey = savedInstanceState.getString(STATE_PROFILE_KEY);
+        String savedValueToConsume = savedInstanceState.getString(STATE_VALUE_TO_CONSUME);
+        if (savedValueToConsume != null) mValueToConsume = savedValueToConsume;
     }
 
     @Override
@@ -144,6 +148,21 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mModLibraryButton.setOnClickListener(v -> onModLibraryClicked());
 
         loadValues(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""), view.getContext());
+        applyPendingFileSelection();
+    }
+
+    /// Applies a path picked in FileSelectorFragment. Runs after loadValues so that
+    /// mTempProfile always exists, which is not the case in onCreateView after a recreation.
+    private void applyPendingFileSelection() {
+        String value = (String) ExtraCore.consumeValue(ExtraConstants.FILE_SELECTOR);
+        if (value == null) return;
+        if (FileSelectorFragment.BUNDLE_SELECT_FOLDER.equals(mValueToConsume)) {
+            mTempProfile.gameDir = value;
+            mDefaultPath.setText(value);
+        } else {
+            mTempProfile.controlFile = value;
+            mDefaultControl.setText(value);
+        }
     }
 
     private View.OnClickListener getGameDirListener() {

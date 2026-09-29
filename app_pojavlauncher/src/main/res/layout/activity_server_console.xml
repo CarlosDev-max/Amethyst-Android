@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/server_console_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_moderate"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_13ssp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.kdt.LoggerView
+            android:id="@+id/server_console_logger"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/padding_moderate"
+        android:paddingEnd="@dimen/padding_moderate"
+        android:paddingBottom="@dimen/padding_moderate">
+
+        <EditText
+            android:id="@+id/server_console_command_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/local_server_command_hint"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/primary_text"
+            android:textColorHint="@color/secondary_text"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/server_console_send_button"
+            style="@style/Amethyst.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_small"
+            android:text="@string/local_server_send" />
+
+        <Button
+            android:id="@+id/server_console_stop_button"
+            style="@style/Amethyst.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_small"
+            android:text="@string/local_server_stop" />
+    </LinearLayout>
+</LinearLayout>

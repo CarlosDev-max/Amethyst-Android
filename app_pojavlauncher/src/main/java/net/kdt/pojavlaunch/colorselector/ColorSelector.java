@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.kdt.SideDialogView;
 
@@ -28,6 +29,7 @@ public class ColorSelector extends SideDialogView implements HueSelectionListene
     private final float[] mHsvSelected = new float[] {360,1,1};
     private int mAlphaSelected = 0xff;
     private ColorStateList mTextColors;
+    private int mErrorTextColor;
     private boolean mWatch = true;
 
     private boolean mAlphaEnabled = true;
@@ -53,6 +55,7 @@ public class ColorSelector extends SideDialogView implements HueSelectionListene
         mAlphaView.setAlphaSelectionListener(this);
         mTextView.addTextChangedListener(this);
         mTextColors = mTextView.getTextColors();
+        mErrorTextColor = ContextCompat.getColor(mTextView.getContext(), R.color.accent_error);
         mAlphaView.setVisibility(mAlphaEnabled ? View.VISIBLE : View.GONE);
 
         // Set elevation to show above other side dialogs.
@@ -147,7 +150,7 @@ public class ColorSelector extends SideDialogView implements HueSelectionListene
                 mTextView.setTextColor(mTextColors);
                 runColor(color);
             }catch (NumberFormatException exception) {
-                mTextView.setTextColor(Color.RED);
+                mTextView.setTextColor(mErrorTextColor);
             }
         }else{
             mWatch = true;

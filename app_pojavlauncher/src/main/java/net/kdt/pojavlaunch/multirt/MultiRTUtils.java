@@ -28,14 +28,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MultiRTUtils {
 
-    private static final HashMap<String,Runtime> sCache = new HashMap<>();
+    private static final ConcurrentHashMap<String,Runtime> sCache = new ConcurrentHashMap<>();
 
     private static final File RUNTIME_FOLDER = new File(Tools.MULTIRT_HOME);
     private static final String JAVA_VERSION_STR = "JAVA_VERSION=\"";
@@ -125,9 +126,9 @@ public class MultiRTUtils {
         unpack200(NATIVE_LIB_DIR,RUNTIME_FOLDER + "/" + name);
 
         File binpack_verfile = new File(RUNTIME_FOLDER,"/"+name+"/pojav_version");
-        FileOutputStream fos = new FileOutputStream(binpack_verfile);
-        fos.write(binpackVersion.getBytes());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(binpack_verfile)) {
+            fos.write(binpackVersion.getBytes(StandardCharsets.UTF_8));
+        }
 
         ProgressLayout.clearProgress(ProgressLayout.UNPACK_RUNTIME);
 
@@ -225,11 +226,10 @@ public class MultiRTUtils {
     @SuppressWarnings("SameParameterValue")
     private static void copyDummyNativeLib(String name, File dest, String libFolder) throws IOException {
         File fileLib = new File(dest, "/"+libFolder + "/" + name);
-        FileInputStream is = new FileInputStream(new File(NATIVE_LIB_DIR, name));
-        FileOutputStream os = new FileOutputStream(fileLib);
-        IOUtils.copy(is, os);
-        is.close();
-        os.close();
+        try (FileInputStream is = new FileInputStream(new File(NATIVE_LIB_DIR, name));
+             FileOutputStream os = new FileOutputStream(fileLib)) {
+            IOUtils.copy(is, os);
+        }
     }
 
     private static void installRuntimeNamedNoRemove(InputStream runtimeInputStream, File dest) throws IOException {
@@ -244,34 +244,41 @@ public class MultiRTUtils {
         TarArchiveInputStream tarIn = new TarArchiveInputStream(
                 new XZCompressorInputStream(tarFileInputStream)
         );
-        TarArchiveEntry tarEntry = tarIn.getNextTarEntry();
-        // tarIn is a TarArchiveInputStream
-        while (tarEntry != null) {
+        try {
+            TarArchiveEntry tarEntry = tarIn.getNextTarEntry();
+            while (tarEntry != null) {
 
-            final String tarEntryName = tarEntry.getName();
-            // publishProgress(null, "Unpacking " + tarEntry.getName());
-            ProgressLayout.setProgress(ProgressLayout.UNPACK_RUNTIME, 100, R.string.global_unpacking, tarEntryName);
+                final String tarEntryName = tarEntry.getName();
+                ProgressLayout.setProgress(ProgressLayout.UNPACK_RUNTIME, 100, R.string.global_unpacking, tarEntryName);
 
-            File destPath = new File(dest, tarEntry.getName());
-            net.kdt.pojavlaunch.utils.FileUtils.ensureParentDirectory(destPath);
-            if (tarEntry.isSymbolicLink()) {
-                try {
-                    // android.system.Os
-                    // Libcore one support all Android versions
-                    Os.symlink(tarEntry.getName(), tarEntry.getLinkName());
-                } catch (Throwable e) {
-                    Log.e("MultiRT", e.toString());
+                File destPath = new File(dest, tarEntryName);
+                // Entry names come from a downloaded archive: reject anything that would
+                // land outside the runtime directory (e.g. "../../lib/...").
+                if (!destPath.getCanonicalPath().startsWith(dest.getCanonicalPath() + File.separator)) {
+                    Log.w("MultiRT", "Skipping tar entry escaping the runtime directory: " + tarEntryName);
+                    tarEntry = tarIn.getNextTarEntry();
+                    continue;
                 }
-
-            } else if (tarEntry.isDirectory()) {
-                net.kdt.pojavlaunch.utils.FileUtils.ensureDirectory(destPath);
-            } else if (!destPath.exists() || destPath.length() != tarEntry.getSize()) {
-                FileOutputStream os = new FileOutputStream(destPath);
-                IOUtils.copyLarge(tarIn, os, buffer);
-                os.close();
+                net.kdt.pojavlaunch.utils.FileUtils.ensureParentDirectory(destPath);
+                if (tarEntry.isSymbolicLink()) {
+                    try {
+                        // Os.symlink(target, linkPath): the link we are creating points at
+                        // the target recorded in the archive, resolved against the runtime dir.
+                        Os.symlink(tarEntry.getLinkName(), destPath.getAbsolutePath());
+                    } catch (Throwable e) {
+                        Log.e("MultiRT", e.toString());
+                    }
+                } else if (tarEntry.isDirectory()) {
+                    net.kdt.pojavlaunch.utils.FileUtils.ensureDirectory(destPath);
+                } else if (!destPath.exists() || destPath.length() != tarEntry.getSize()) {
+                    try (FileOutputStream os = new FileOutputStream(destPath)) {
+                        IOUtils.copyLarge(tarIn, os, buffer);
+                    }
+                }
+                tarEntry = tarIn.getNextTarEntry();
             }
-            tarEntry = tarIn.getNextTarEntry();
+        } finally {
+            tarIn.close();
         }
-        tarIn.close();
     }
 }

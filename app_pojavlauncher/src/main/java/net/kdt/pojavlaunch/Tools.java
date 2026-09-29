@@ -672,15 +672,20 @@ public final class Tools {
                     // Looks for controllable_natives/SDL/<sdl_version_number>/libSDL2.so and
                     // deletes it. We can assume array index 0 because this dir gets fully deleted
                     // before the loop is started.
-                    if (deleted.isDirectory()) {
-                        if (deleted.listFiles().length > 0) {
-                            if (deleted.listFiles()[0].listFiles().length > 0) {
-                                if (deleted.listFiles()[0].listFiles()[0].exists()) {
-                                    deleted.listFiles()[0].listFiles()[0].delete();
-                                    break;
-                                }
-                            }
+                    File[] sdlRoots = deleted.isDirectory() ? deleted.listFiles() : null;
+                    if (sdlRoots != null && sdlRoots.length > 0) {
+                        File[] extractedLibs = sdlRoots[0].listFiles();
+                        if (extractedLibs != null && extractedLibs.length > 0 && extractedLibs[0].exists()) {
+                            extractedLibs[0].delete();
+                            break;
                         }
+                    }
+                    // The mod creates this directory concurrently, so listFiles() can come back
+                    // null; and without a pause this spins on a core for the whole game startup.
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        break;
                     }
                 }
                 // We can end here because SdlNativeLibraryLoader only extracts libSDL2.so once
@@ -1263,7 +1268,10 @@ public final class Tools {
             if (libItem.name.startsWith("net.java.dev.jna:jna:")) {
                 // Special handling for LabyMod 1.8.9, Forge 1.12.2(?) and oshi
                 // we have libjnidispatch 5.13.0 in jniLibs directory
-                if (Integer.parseInt(version[0]) >= 5 && Integer.parseInt(version[1]) >= 13) continue;
+                int jnaMajor = Integer.parseInt(version[0]);
+                int jnaMinor = version.length > 1 ? Integer.parseInt(version[1]) : 0;
+                // Compare as a version pair: "major >= 5 && minor >= 13" would downgrade 6.x.
+                if (jnaMajor > 5 || (jnaMajor == 5 && jnaMinor >= 13)) continue;
                 Log.d(APP_NAME, "Library " + libItem.name + " has been changed to version 5.13.0");
                 createLibraryInfo(libItem);
                 libItem.name = "net.java.dev.jna:jna:5.13.0";
@@ -1467,9 +1475,9 @@ public final class Tools {
     }
 
     public static String read(InputStream is) throws IOException {
-        String readResult = IOUtils.toString(is, StandardCharsets.UTF_8);
-        is.close();
-        return readResult;
+        try (InputStream stream = is) {
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
+        }
     }
 
     public static String read(String path) throws IOException {
@@ -1586,14 +1594,13 @@ public final class Tools {
     }
 
     public static String getFileName(Context ctx, Uri uri) {
-        Cursor c = ctx.getContentResolver().query(uri, null, null, null, null);
-        if(c == null) return uri.getLastPathSegment(); // idk myself but it happens on asus file manager
-        c.moveToFirst();
-        int columnIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        if(columnIndex == -1) return uri.getLastPathSegment();
-        String fileName = c.getString(columnIndex);
-        c.close();
-        return fileName;
+        try (Cursor c = ctx.getContentResolver().query(uri, null, null, null, null)) {
+            // Some providers return an empty cursor, in which case moveToFirst() would throw.
+            if (c == null || !c.moveToFirst()) return uri.getLastPathSegment(); // idk myself but it happens on asus file manager
+            int columnIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            if (columnIndex == -1) return uri.getLastPathSegment();
+            return c.getString(columnIndex);
+        }
     }
 
     /** Swap the main fragment with another */
